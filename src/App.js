@@ -1,21 +1,20 @@
-import React from 'react';
-import { BrowserRouter as  Route, Routes } from 'react-router-dom';
-import Sidebar from './Componnents/Sidebar/Sidebar';
-import Profile from './Componnents/Profile/Profile';
-// import LoginForm from './Componnents/LoginForm/LoginForm'
-// import ManagerList from './Componnents/Management/ManagerList';
-import ManagerList from './Componnents/Management/ManagerList';
+import React from "react";
+import { Outlet, BrowserRouter } from "react-router-dom";
+import Sidebar from "./Componnents/Sidebar/Sidebar";
+import Profile from "./Componnents/Profile/Profile";
+import LoginForm from "./Componnents/LoginForm/LoginForm";
 
 function App() {
-    return (
-    //    <Profile />
-    //         <Sidebar>
-    //             <Routes>                 
-    //                 <Route path="/profile" element={<Profile />} />                 
-    //             </Routes>
-    //         </Sidebar>
-            <ManagerList />
-    );
+  return (
+    <div>
+      <div className="row">
+        <div className="col-lg-3">
+          <Sidebar></Sidebar>
+        </div>
+        <div className="col-lg-9">{/* <Outlet></Outlet> */}</div>
+      </div>
+    </div>
+  );
 }
 
 export default App;
