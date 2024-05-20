@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './Sidebar.css';
+import { Link } from 'react-router-dom';
+
 
 const Sidebar = () => {
     const [isExpanded, setIsExpanded] = useState(false);
@@ -15,10 +17,10 @@ const Sidebar = () => {
             <aside id="sidebar" className={isExpanded ? 'expand' : ''}>
                 <div className="d-flex">
                     <button className="toggle-btn" type="button" onClick={toggleSidebar}>
-                        <i className="bi bi-grid"></i>
+                        <i className="bi bi-list"></i>
                     </button>
                     <div className="sidebar-logo">
-                        <a href="#">Warehouse Management</a>
+                        <a href="/">Warehouse Management</a>
                     </div>
                 </div>
                 <div className="profile">
@@ -30,34 +32,38 @@ const Sidebar = () => {
                 </div>
                 <ul className="sidebar-nav">
                     <li className="sidebar-item">
-                        <a href="#" className="sidebar-link">
+                        <Link to="/home" className="sidebar-link">
+                            <i className="bi bi-house"></i>
+                            <span>Home</span>
+                        </Link>
+                    </li>
+                    <li className="sidebar-item">
+                        <Link to="/profile" className="sidebar-link">
                             <i className="bi bi-person"></i>
                             <span>Profile</span>
-                        </a>
+                        </Link>
                     </li>
                     <li className="sidebar-item">
-                        <a href="#" className="sidebar-link">
-                            <i className="bi bi-card-checklist"></i>
-                            <span>Task</span>
-                        </a>
+                        <Link to="/item" className="sidebar-link">
+                            <i className="bi bi-boxes"></i>
+                            <span>Item</span>
+                        </Link>
                     </li>
-
-
                     <li className="sidebar-item">
-                        <a href="#" className="sidebar-link">
+                        <Link to="/report" className="sidebar-link">
                             <i className="bi bi-clipboard2-data"></i>
                             <span>Report</span>
-                        </a>
+                        </Link>
                     </li>
                     <li className="sidebar-item">
-                        <a href="#" className="sidebar-link">
-                            <i className="bi bi-gear"></i>
-                            <span>Setting</span>
-                        </a>
+                        <Link to="/transaction" className="sidebar-link">
+                            <i className="bi bi-arrow-left-right"></i>
+                            <span>Transaction</span>
+                        </Link>
                     </li>
                 </ul>
-                <div className="sidebar-footer">
-                    <a href="#" className="sidebar-link">
+                <div className="sidebar-iteam">
+                    <a href="/" className="sidebar-link">
                         <i className="bi bi-box-arrow-right"></i>
                         <span>Logout</span>
                     </a>
