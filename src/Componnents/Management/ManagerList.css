@@ -1,46 +1,176 @@
-App.css
-.App {
-    font-family: Arial, sans-serif;
-    max-width: 800px;
-    margin: 0 auto;
+/* Custom CSS for Manager List */
+
+/* Styling for modal dialog */
+body{
+    background-color: #0c0058;
+}
+h1{
+    align-items: center;
+    color: #ffffff;
+    text-align: center;
+    margin-bottom: 20px; 
+    size: 100px;
+    margin-top: 20px;
+    font-size: 40px;
+}
+.modal-dialog {
+    max-width: 600px;
+  }
+  
+  /* Styling for modal title */
+  .modal-title {
+    font-size: 1.5rem;
+  }
+  
+  /* Styling for form labels */
+  .form-label {
+    font-weight: bold;
+  }
+  
+  /* Styling for form inputs */
+  .form-control {
+    margin-bottom: 10px;
+  }
+  
+  /* Styling for modal footer */
+  .modal-footer {
+    justify-content: space-between;
+  }
+  
+  /* Styling for buttons */
+  .btn {
+    margin-right: 10px;
+  }
+  
+  /* Styling for table */
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  /* Styling for table header */
+  .table th {
+    text-align: left;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-bottom: 2px solid #ddd;
+  }
+  
+  /* Styling for table body */
+  .table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  /* Styling for edit and delete buttons in table */
+  .table .btn {
+    margin-right: 5px;
+  }
+  
+  /* Custom CSS for Manager List */
+
+/* Container để wrap toàn bộ nội dung */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     padding: 20px;
   }
   
-  ul {
-    list-style-type: none;
-    padding: 0;
+  /* Căn giữa tiêu đề h1 */
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
   }
   
-  li {
-    border: 1px solid #ccc;
-    margin-bottom: 10px;
-    padding: 10px;
+  /* Thêm margin cho nút "Add Manager" */
+  .button-add {
+    margin-bottom: 20px;
   }
   
-  .update-form {
-    margin-top: 20px;
-  }
-  
-  input[type="text"],
-  input[type="password"],
-  input[type="date"],
-  input[type="number"],
-  select {
+  /* Table */
+  .table-container {
     width: 100%;
-    margin-bottom: 10px;
-    padding: 8px;
+    overflow-x: auto;
   }
   
-  button {
-    background-color: #4CAF50;
-    color: white;
+  /* Modal */
+  .modal-dialog {
+    max-width: 600px;
+  }
+  /* Custom CSS for Manager List */
+
+/* Button Add Manager */
+/* .button-add {
+    margin-bottom: 20px;
     padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: #007bff;
     border: none;
+    border-radius: 5px;
     cursor: pointer;
-    margin-top: 10px;
+    transition: background-color 0.3s ease;
   }
   
-  button:hover {
-    background-color: #45a049;
+  .button-add:hover {
+    background-color: #0056b3;
   }
+   */
+
+   /* Custom CSS for Manager List */
+
+/* Button Add Manager */
+.button-add {
+    margin-bottom: 20px;
+    margin-left: auto; /* Căn nút sang bên phải */
+    padding: 20px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #0b0b6d;
+    background-color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-left: 20px;
+    font-size: 20px;
+  }
+  
+  .button-add:hover {
+    background-color: #0056b3;
+  }
+  /* Custom CSS for Manager List */
+
+/* Màu nền cho modal */
+.modal-content {
+    background-color: #5653c4; /* Màu nền mới */
+    border: 2px solid #ffffff; /* Đổi màu khung viền */
+    border-radius: 10px; /* Bo tròn góc khung */
+  }
+  
+  /* Màu tiêu đề của modal */
+  .modal-title {
+    color: #ffffff; /* Đổi màu tiêu đề */
+  }
+  .table{
+    /* margin-bottom: 20px; */
+    /* margin-left: auto; Căn nút sang bên phải */
+    padding: 20px 20px;
+    /* font-size: 1rem; */
+    /* font-weight: bold; */
+   /* color: #0c0058; */
+    /* border: none; */
+    border-radius: 10px;
+    /* cursor: pointer; */
+    /* transition: background-color 0.3s ease; */
+    /* margin: 20px; */
+    /* font-size: 20px; */
+    padding: 20px;
+        overflow: hidden; /* Ẩn bất kỳ phần nào của các phần tử con bên ngoài phạm vi của bảng */
+ margin: 20px;
+ margin-right: 30px;
+    }
   

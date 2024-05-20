@@ -1,10 +1,11 @@
 import React from 'react';
 import { BrowserRouter as  Route, Routes } from 'react-router-dom';
 import Sidebar from './Componnents/Sidebar/Sidebar';
-import Profile from './Componnents/Profile/Profile';
+// import Profile from './Componnents/Profile/Profile';
 // import LoginForm from './Componnents/LoginForm/LoginForm'
 // import ManagerList from './Componnents/Management/ManagerList';
 import ManagerList from './Componnents/Management/ManagerList';
+// import AdminPanel from './Componnents/Management/AdminPanel';
 
 function App() {
     return (
@@ -15,6 +16,7 @@ function App() {
     //             </Routes>
     //         </Sidebar>
             <ManagerList />
+            // <AdminPanel />
     );
 }
 

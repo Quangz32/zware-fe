@@ -1,117 +1,178 @@
 import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { Button, Modal, Form } from 'react-bootstrap';
 import './ManagerList.css';
 
+const ManagerList = () => {
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [managers, setManagers] = useState([]);
+  const [newManager, setNewManager] = useState({
+    name: '',
+    email: '',
+    password: '',
+    role: 'manager',
+    dateOfBirth: '',
+    phone: '',
+    gender: 'male',
+    numberOfWarehouse: 0,
+  });
 
-function App() {
-    // State để lưu trữ thông tin người dùng
-    const [users, setUsers] = useState([
-      {
-        id: 1,
-        name: 'John Doe',
-        email: 'john@example.com',
-        password: '********',
-        role: 'admin',
-        dob: '1990-01-01',
-        phone: '1234567890',
-        gender: 'male',
-        warehouse: 3
-      },
-      // Thêm các người dùng khác nếu cần
-    ]);
-  
-    // State để lưu trữ thông tin người dùng đang được chọn để chỉnh sửa
-    const [selectedUser, setSelectedUser] = useState(null);
-  
-    // Hàm để xử lý tìm kiếm người dùng
-    const searchUser = (keyword) => {
-      // Tìm kiếm người dùng theo tên, email hoặc số điện thoại
-      const filteredUsers = users.filter(user =>
-        user.name.toLowerCase().includes(keyword.toLowerCase()) ||
-        user.email.toLowerCase().includes(keyword.toLowerCase()) ||
-        user.phone.includes(keyword)
-      );
-      // Cập nhật danh sách người dùng được hiển thị
-      setUsers(filteredUsers);
-    };
-  
-    // Hàm để cập nhật thông tin người dùng
-    const updateUser = (updatedUserInfo) => {
-      const updatedUsers = users.map(user =>
-        user.id === updatedUserInfo.id ? updatedUserInfo : user
-      );
-      setUsers(updatedUsers);
-      setSelectedUser(null); // Đóng form chỉnh sửa sau khi cập nhật thành công
-    };
-  
-    return (
-      <div className="App">
-        <h1>User Management</h1>
-        {/* Form tìm kiếm */}
-        <input
-          type="text"
-          placeholder="Search by name, email, or phone"
-          onChange={(e) => searchUser(e.target.value)}
-        />
-        {/* Danh sách người dùng */}
-        <ul>
-          {users.map(user => (
-            <li key={user.id}>
-              {/* Hiển thị thông tin người dùng */}
-              <div>Name: {user.name}</div>
-              <div>Email: {user.email}</div>
-              <div>Password: {user.password}</div>
-              <div>Role: {user.role}</div>
-              <div>Date of Birth: {user.dob}</div>
-              <div>Phone: {user.phone}</div>
-              <div>Gender: {user.gender}</div>
-              <div>Number Warehouse: {user.warehouse}</div>
-              {/* Button để chỉnh sửa thông tin người dùng */}
-              <button onClick={() => setSelectedUser(user)}>Update</button>
-            </li>
+  const handleCloseAddModal = () => setShowAddModal(false);
+  const handleShowAddModal = () => setShowAddModal(true);
+
+  const handleAddManager = () => {
+    setManagers([...managers, newManager]);
+    setNewManager({
+      name: '',
+      email: '',
+      password: '',
+      role: 'manager',
+      dateOfBirth: '',
+      phone: '',
+      gender: 'male',
+      numberOfWarehouse: 0,
+    });
+    handleCloseAddModal();
+  };
+
+  const handleDeleteManager = (index) => {
+    const updatedManagers = [...managers];
+    updatedManagers.splice(index, 1);
+    setManagers(updatedManagers);
+  };
+
+  const handleEditManager = (index) => {
+    // Implement edit functionality here
+    console.log("Edit manager at index", index);
+  };
+
+  return (
+    <div>
+      <h1>Manager List</h1>
+      {/* <Button variant="primary" onClick={handleShowAddModal}>
+        Add Manager
+      </Button> */}
+      <Button className="button-add" variant="primary" onClick={handleShowAddModal}>
+  Add Manager
+</Button>
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Date of Birth</th>
+            <th>Phone</th>
+            <th>Gender</th>
+            <th>Number of Warehouses</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {managers.map((manager, index) => (
+            <tr key={manager}>
+              <td>{manager.name}</td>
+              <td>{manager.email}</td>
+              <td>{manager.role}</td>
+              <td>{manager.dateOfBirth}</td>
+              <td>{manager.phone}</td>
+              <td>{manager.gender}</td>
+              <td>{manager.numberOfWarehouse}</td>
+              <td>
+              <Button variant="warning" onClick={() => handleEditManager(index)}>Edit</Button>
+                <Button variant="danger" onClick={() => handleDeleteManager(index)}>Delete</Button>
+                {/* <Button variant="warning" onClick={() => onEdit(manager)}>Edit</Button>{' '}
+              <Button variant="danger" onClick={() => onDelete(manager.id)}>Delete</Button> */}
+                
+              </td>
+            </tr>
           ))}
-        </ul>
-        {/* Hiển thị form chỉnh sửa nếu có người dùng được chọn */}
-        {selectedUser && (
-          <div className="update-form">
-            <h2>Update User</h2>
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              // Lấy thông tin từ form và cập nhật người dùng
-              const updatedUserInfo = {
-                ...selectedUser,
-                name: e.target.name.value,
-                email: e.target.email.value,
-                password: e.target.password.value,
-                role: e.target.role.value,
-                dob: e.target.dob.value,
-                phone: e.target.phone.value,
-                gender: e.target.gender.value,
-                warehouse: parseInt(e.target.warehouse.value)
-              };
-              updateUser(updatedUserInfo);
-            }}>
-              {/* Các trường thông tin để chỉnh sửa */}
-              <input type="text" name="name" defaultValue={selectedUser.name} />
-              <input type="text" name="email" defaultValue={selectedUser.email} />
-              <input type="password" name="password" defaultValue={selectedUser.password} />
-              <select name="role" defaultValue={selectedUser.role}>
-                <option value="admin">Admin</option>
-                <option value="manager">Manager</option>
-              </select>
-              <input type="date" name="dob" defaultValue={selectedUser.dob} />
-              <input type="text" name="phone" defaultValue={selectedUser.phone} />
-              <select name="gender" defaultValue={selectedUser.gender}>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-              </select>
-              <input type="number" name="warehouse" defaultValue={selectedUser.warehouse} />
-              <button type="submit">Save</button>
-            </form>
-          </div>
-        )}
-      </div>
-    );
-  }
-  
-  export default App;
+        </tbody>
+      </table>
+
+      <Modal show={showAddModal} onHide={handleCloseAddModal}>
+        <Modal.Header closeButton>
+          <Modal.Title >Add Manager</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Group controlId="formBasicName">
+            <Form.Label>Name</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter name"
+              value={newManager.name}
+              onChange={(e) => setNewManager({ ...newManager, name: e.target.value })}
+            />
+          </Form.Group>
+          <Form.Group controlId="formBasicEmail">
+            <Form.Label>Email</Form.Label>
+            <Form.Control
+              type="email"
+              placeholder="Enter email"
+              value={newManager.email}
+              onChange={(e) => setNewManager({ ...newManager, email: e.target.value })}
+            />
+          </Form.Group>
+          <Form.Group controlId="formBasicRole">
+            <Form.Label>Role</Form.Label>
+            <Form.Control
+              as="select"
+              value={newManager.role}
+              onChange={(e) => setNewManager({ ...newManager, role: e.target.value })}
+            >
+              <option value="manager">Manager</option>
+              <option value="admin">Admin</option>
+            </Form.Control>
+          </Form.Group>
+          <Form.Group controlId="formBasicDateOfBirth">
+            <Form.Label>Date of Birth</Form.Label>
+            <Form.Control
+              type="date"
+              value={newManager.dateOfBirth}
+              onChange={(e) => setNewManager({ ...newManager, dateOfBirth: e.target.value })}
+            />
+          </Form.Group>
+          <Form.Group controlId="formBasicPhone">
+            <Form.Label>Phone</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter phone"
+              value={newManager.phone}
+              onChange={(e) => setNewManager({ ...newManager, phone: e.target.value })}
+            />
+          </Form.Group>
+          <Form.Group controlId="formBasicGender">
+            <Form.Label>Gender</Form.Label>
+            <Form.Control
+              as="select"
+              value={newManager.gender}
+              onChange={(e) => setNewManager({ ...newManager, gender: e.target.value })}
+            >
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </Form.Control>
+          </Form.Group>
+          <Form.Group controlId="formBasicNumberOfWarehouses">
+            <Form.Label>Number of Warehouses</Form.Label>
+            <Form.Control
+              type="number"
+              placeholder="Enter number of warehouses"
+              value={newManager.numberOfWarehouse}
+              onChange={(e) => setNewManager({ ...newManager, numberOfWarehouse: parseInt(e.target.value) })}
+            />
+          </Form.Group>
+          {/* Add more form fields for other properties */}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseAddModal}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleAddManager}>
+            Add
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
+  );
+};
+
+export default ManagerList;
