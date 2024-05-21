@@ -3,8 +3,8 @@ import './LoginForm.css';
 import { FaUser, FaLock } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
-const LoginForm = () => {
-    const navigate = useNavigate();
+const LoginForm = () => {   
+     const navigate = useNavigate();
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -16,7 +16,7 @@ const LoginForm = () => {
     return (
         <div className="container">
             <div className="element wrapper">
-                <form onSubmit={handleSubmit}>
+               <form onSubmit={handleSubmit}>
                     <h1>Login</h1>
                     <div className="input-box">
                         <input type="text" placeholder="Username" required />
@@ -32,7 +32,9 @@ const LoginForm = () => {
                         </label>
                         <a href="..">Forgot Password</a>
                     </div>
+                    {/* <Link to="/home"> */}
                     <button type="submit" className='login'>Login</button>
+                    {/* </Link> */}
                 </form>
             </div>
         </div>

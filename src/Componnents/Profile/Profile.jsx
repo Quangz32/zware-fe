@@ -12,7 +12,7 @@ const Profile = () => {
     date_of_birth: '',
     phone: '',
     gender: '',
-    avatar: 'https://i.pinimg.com/564x/6f/51/e0/6f51e0742e98e2a4422c280059e9f516.jpg',
+    avatar: 'avatar-1.avif',
     warehouse_id: ''
   });
 
@@ -40,8 +40,8 @@ const Profile = () => {
 
   return (
     <div className="container centered-container">
-      <div className="row w-100">
-        <div className="col-lg-8 mx-auto">
+      <div className="w-100">
+        <div className="">
           <div className="container rounded bg-white p-4">
             <div className="row">
               <div className="col-md-3 border-right d-flex flex-column align-items-center text-center p-3 py-5">
