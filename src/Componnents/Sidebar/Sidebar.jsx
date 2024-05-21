@@ -13,7 +13,7 @@ const Sidebar = () => {
     };
 
     return (
-        <div className={`wrapper ${isExpanded ? 'expand' : ''}`}>
+<div className={`wrapper ${isExpanded ? 'expand' : ''}`}>
             <aside id="sidebar" className={isExpanded ? 'expand' : ''}>
                 <div className="d-flex">
                     <button className="toggle-btn" type="button" onClick={toggleSidebar}>
@@ -72,6 +72,7 @@ const Sidebar = () => {
             </aside>
             
         </div>
+        
     );
 };
 

@@ -1,4 +1,4 @@
-import Home from "../Componnents/Home/Home"
+import ManagerList from "../Componnents/Management/ManagerList"
 import Sidebar from "../Componnents/Sidebar/Sidebar"
 
 const profile = ()=>{
@@ -6,7 +6,7 @@ const profile = ()=>{
     <>
         <div className="d-flex">
             <div className="col-auto"><Sidebar></Sidebar></div>
-            <div className="col"><Home></Home></div>
+            <div className="col"><ManagerList></ManagerList></div>
         </div>
     </>
     )

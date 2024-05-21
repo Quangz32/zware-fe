@@ -10,6 +10,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Profile from "./Pages/Profile";
 import Login from "./Pages/Login";
 import Home from "./Pages/Home";
+import UserManage from "./Pages/UserManage";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -22,6 +23,7 @@ root.render(
 
         {/* <Route path="/dashboard" element={<Sidebar />}></Route> */}
         <Route path="/profile" element={<Profile />}></Route>
+        <Route path="/users" element={<UserManage />}></Route>
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
