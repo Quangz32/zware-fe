@@ -3,21 +3,25 @@ import './LoginForm.css';
 import { FaUser, FaLock } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
-// Mock function to simulate authentication API call
+// Function to call the authentication API
 const authenticateUser = async (username, password) => {
-    // Simulate a delay for the authentication process
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            if (username === 'user' && password === 'password') {
-                resolve('Authentication successful');
-            } else {
-                reject('Invalid username or password');
-            }
-        }, 1000);
+    const response = await fetch('Endpoint API URL link', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json', // gửi đi ở định dạng JSON
+        },
+        body: JSON.stringify({ username, password }),
     });
+
+    if (!response.ok) {
+        const message = await response.json();
+        throw new Error(message.error || 'Invalid username or password');
+    }
+
+    return await response.json();
 };
 
-const LoginForm = () => {   
+const LoginForm = () => {
     const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -37,13 +41,13 @@ const LoginForm = () => {
         }
 
         try {
-            // Call the mock authentication function
+            // Call the API to authenticate the user
             await authenticateUser(username, password);
             // If authentication is successful, navigate to the home page
             navigate('/home');
         } catch (err) {
             // If authentication fails, set the error message
-            setError(err);
+            setError(err.message);
         } finally {
             setLoading(false);
         }
@@ -51,8 +55,8 @@ const LoginForm = () => {
 
     return (
         <div className="container">
-            <div className="element wrapper">
-               <form onSubmit={handleSubmit}>
+            <div className="wrapper">
+                <form onSubmit={handleSubmit}>
                     <h1>Login</h1>
                     {error && <div className="error">{error}</div>}
                     <div className="input-box">
