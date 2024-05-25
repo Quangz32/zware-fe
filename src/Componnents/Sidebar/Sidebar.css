@@ -31,19 +31,23 @@ h1 {
 .main {
   min-height: 100vh;
   width: 100%;
-  overflow: hidden;
+  overflow: auto; /* Allow scrolling */
   transition: all 0.35s ease-in-out;
   background-color: #fafbfe;
+  margin-left: 70px; /* Space for the sidebar */
 }
 
 #sidebar {
   width: 70px;
   min-width: 70px;
+  height: 100vh; /* Full height */
+  position: fixed; /* Fixed position */
   z-index: 1000;
   transition: all 0.25s ease-in-out;
   background-color: #0e2238;
   display: flex;
   flex-direction: column;
+  border: none; /* Ensure no border is applied */
 }
 
 #sidebar.expand {
@@ -142,9 +146,7 @@ a.sidebar-link:hover {
 }
 
 .sidebar-footer {
-  
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  
 }
 
 .sidebar-footer a {
