@@ -8,23 +8,34 @@ const ManagerList = () => {
   const [newManager, setNewManager] = useState({
     name: '',
     email: '',
-    password: '',
     role: 'manager',
     dateOfBirth: '',
     phone: '',
     gender: 'male',
     numberOfWarehouse: 0,
   });
+  const [editIndex, setEditIndex] = useState(null); // New state for tracking edit index
 
-  const handleCloseAddModal = () => setShowAddModal(false);
+  const handleCloseAddModal = () => {
+    setShowAddModal(false);
+    setEditIndex(null); // Reset edit index when modal is closed
+  };
+
   const handleShowAddModal = () => setShowAddModal(true);
 
   const handleAddManager = () => {
-    setManagers([...managers, newManager]);
+    if (editIndex !== null) {
+      // If editing, update existing manager
+      const updatedManagers = [...managers];
+      updatedManagers[editIndex] = newManager;
+      setManagers(updatedManagers);
+    } else {
+      // If adding, add new manager
+      setManagers([...managers, newManager]);
+    }
     setNewManager({
       name: '',
       email: '',
-      password: '',
       role: 'manager',
       dateOfBirth: '',
       phone: '',
@@ -41,20 +52,20 @@ const ManagerList = () => {
   };
 
   const handleEditManager = (index) => {
-    // Implement edit functionality here
-    console.log("Edit manager at index", index);
+    const managerToEdit = managers[index]; // Get the manager to edit
+    setNewManager({ ...managerToEdit }); // Populate form fields with manager's details
+    setEditIndex(index); // Set the index of the manager being edited
+    handleShowAddModal(); // Show the modal
   };
 
   return (
-    <div>
+    <div className='container '>
+      <div>
       <h1>Manager List</h1>
-      {/* <Button variant="primary" onClick={handleShowAddModal}>
+      <Button className="button-add p-4" variant="primary" onClick={handleShowAddModal}>
         Add Manager
-      </Button> */}
-      <Button className="button-add" variant="primary" onClick={handleShowAddModal}>
-  Add Manager
-</Button>
-      <table className="table">
+      </Button>
+      <table className="table text-center">
         <thead>
           <tr>
             <th>Name</th>
@@ -63,13 +74,13 @@ const ManagerList = () => {
             <th>Date of Birth</th>
             <th>Phone</th>
             <th>Gender</th>
-            <th>Number of Warehouses</th>
+            <th>WarehousesID</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {managers.map((manager, index) => (
-            <tr key={manager}>
+            <tr key={index}>
               <td>{manager.name}</td>
               <td>{manager.email}</td>
               <td>{manager.role}</td>
@@ -78,11 +89,8 @@ const ManagerList = () => {
               <td>{manager.gender}</td>
               <td>{manager.numberOfWarehouse}</td>
               <td>
-              <Button variant="warning" onClick={() => handleEditManager(index)}>Edit</Button>
+                <Button variant="warning" onClick={() => handleEditManager(index)}>Edit</Button>
                 <Button variant="danger" onClick={() => handleDeleteManager(index)}>Delete</Button>
-                {/* <Button variant="warning" onClick={() => onEdit(manager)}>Edit</Button>{' '}
-              <Button variant="danger" onClick={() => onDelete(manager.id)}>Delete</Button> */}
-                
               </td>
             </tr>
           ))}
@@ -91,7 +99,7 @@ const ManagerList = () => {
 
       <Modal show={showAddModal} onHide={handleCloseAddModal}>
         <Modal.Header closeButton>
-          <Modal.Title >Add Manager</Modal.Title>
+          <Modal.Title>{editIndex !== null ? 'Edit Manager' : 'Add Manager'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form.Group controlId="formBasicName">
@@ -167,10 +175,11 @@ const ManagerList = () => {
             Close
           </Button>
           <Button variant="primary" onClick={handleAddManager}>
-            Add
+            {editIndex !== null ? 'Save Changes' : 'Add'}
           </Button>
         </Modal.Footer>
       </Modal>
+    </div>
     </div>
   );
 };
