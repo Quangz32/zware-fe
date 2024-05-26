@@ -44,13 +44,19 @@ const Profile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Filter the profile data to exclude the warehouse_id if the role is not Admin
+    const profileData = { ...profile };
+    if (profile.role !== 'Admin') {
+      delete profileData.warehouse_id;
+    }
+
     try {
       const response = await fetch('/api/validate-profile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(profile)
+        body: JSON.stringify(profileData)
       });
 
       const data = await response.json();
@@ -190,18 +196,20 @@ const Profile = () => {
                         </select>
                         {errors.gender && <span className="text-danger">{errors.gender}</span>}
                       </div>
-                      <div className="col-md-6">
-                        <label className="labels">Warehouse</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="warehouse"
-                          name="warehouse_id"
-                          value={profile.warehouse_id}
-                          onChange={handleChange}
-                        />
-                        {errors.warehouse_id && <span className="text-danger">{errors.warehouse_id}</span>}
-                      </div>
+                      {profile.role === 'Admin' && (
+                        <div className="col-md-6">
+                          <label className="labels">Warehouse</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="warehouse"
+                            name="warehouse_id"
+                            value={profile.warehouse_id}
+                            onChange={handleChange}
+                          />
+                          {errors.warehouse_id && <span className="text-danger">{errors.warehouse_id}</span>}
+                        </div>
+                      )}
                     </div>
                     <div className="mt-5 text-center">
                       <button className="btn btn-primary profile-button" type="submit">Save Profile</button>
