@@ -42,6 +42,12 @@ const Sidebar = () => {
                     </Link>
                 </li>
                 <li className="sidebar-item">
+                    <Link to="/users" className="sidebar-link">
+                        <i className="bi bi-person-vcard"></i>
+                        <span>Manager</span>
+                    </Link>
+                </li>
+                <li className="sidebar-item">
                     <Link to="/item" className="sidebar-link">
                         <i className="bi bi-boxes"></i>
                         <span>Item</span>
