@@ -11,16 +11,16 @@ import Product from './Componnents/Product/Product';
 function App() {
     return (
     //    <Profile />
-     <ManagerList />
+    //  <ManagerList />
             // <Sidebar>
             //     <Routes>                 
             //         <Route path="/profile" element={<Profile />} />                 
             //     </Routes>
             // </Sidebar>
            
-        //     <div className="app">
-        //     <Product />
-        //   </div>
+            <div className="app">
+            <Product />
+          </div>
     
     
     );

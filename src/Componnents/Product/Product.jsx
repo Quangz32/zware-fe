@@ -36,14 +36,15 @@ const Product = () => {
   };
 
   return (
-    <div className="container">
-      <h1 className="mt-4">Product Management</h1>
-      <form className="product-form mt-4" onSubmit={handleSubmit}>
-        <div className="mb-3">
+    <div className="product-container">
+      <h1 >Product Management</h1>
+      <div className='row'>
+      <form className="product-form " onSubmit={handleSubmit}>
+        <div >
           <label className="form-label">Name</label>
           <input type="text" className="form-control" name="name" value={product.name} onChange={handleChange} required />
         </div>
-        <div className="mb-3">
+        <div >
           <label className="form-label">Category</label>
           <select className="form-select" name="category" value={product.category} onChange={handleChange} required>
             <option value="">Select category...</option>
@@ -71,6 +72,10 @@ const Product = () => {
         </div>
         <button type="submit" className="btn btn-primary">{isEditing ? 'Update' : 'Create'}</button>
       </form>
+      </div>
+<div>
+  <h1>List Product Management</h1>
+</div>
       <div className="product-list mt-4">
         {products.map((product) => (
           <div key={product.id} className="product-item border p-3 mb-3">
