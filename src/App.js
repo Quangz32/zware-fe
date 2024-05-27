@@ -22,10 +22,10 @@ function App() {
            
             <div className="app">
             {/* <Product /> */}
-            {/* <ProductList /> */}
+            <ProductList />
       {/* <InventoryOutput /> */}
       {/* <ManagerList /> */}
-<WarehouseManagerment />  
+{/* <WarehouseManagerment />   */}
           </div>
     
     
