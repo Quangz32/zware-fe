@@ -8,19 +8,23 @@ import ManagerList from './Componnents/Management/ManagerList';
 // import AdminPanel from './Componnents/Management/AdminPanel';
 import Product from './Componnents/Product/Product';
 // import AddProduct from './Componnents/Product/AddProduct';
+import InventoryOutput from './InventoryOutput/InventoryOutput';
 function App() {
     return (
     //    <Profile />
-    //  <ManagerList />
+     <ManagerList />
             // <Sidebar>
             //     <Routes>                 
             //         <Route path="/profile" element={<Profile />} />                 
             //     </Routes>
             // </Sidebar>
            
-            <div className="app">
-            <Product />
-          </div>
+    //         <div className="app">
+    //         {/* <Product /> */}
+            
+    //   <InventoryOutput />
+  
+    //       </div>
     
     
     );
