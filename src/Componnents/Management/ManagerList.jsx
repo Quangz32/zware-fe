@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Button, Modal, Form } from 'react-bootstrap';
+import { Button, Modal, Form, Alert } from 'react-bootstrap';
 import './ManagerList.css';
 
 const ManagerList = () => {
@@ -10,22 +9,41 @@ const ManagerList = () => {
     name: '',
     email: '',
     role: 'manager',
-    dateOfBirth: '',
+    date_of_birth: '',
     phone: '',
     gender: 'male',
-    numberOfWarehouse: 0,
+    warehouse_id: 0,
   });
   const [editIndex, setEditIndex] = useState(null);
-  const [searchTerm, setSearchTerm] = useState(''); // State for search term
+  const [searchTerm, setSearchTerm] = useState('');
+  const [error, setError] = useState('');
 
   const handleCloseAddModal = () => {
     setShowAddModal(false);
     setEditIndex(null);
+    setError('');
   };
 
-  const handleShowAddModal = () => setShowAddModal(true);
+  const handleShowAddModal = () => {
+    setShowAddModal(true);
+    setError('');
+  };
+
+  const validateManager = (manager) => {
+    if (!manager.name || !manager.email || !manager.date_of_birth || !manager.phone || manager.warehouse_id === 0) {
+      return 'Please fill in all fields.';
+    }
+    if (!/\S+@\S+\.\S+/.test(manager.email)) return 'Email is invalid.';
+    if (managers.some((m, index) => m.email === manager.email && index !== editIndex)) return 'Email must be unique.';
+    return '';
+  };
 
   const handleAddManager = () => {
+    const validationError = validateManager(newManager);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
     if (editIndex !== null) {
       const updatedManagers = [...managers];
       updatedManagers[editIndex] = newManager;
@@ -37,10 +55,10 @@ const ManagerList = () => {
       name: '',
       email: '',
       role: 'manager',
-      dateOfBirth: '',
+      date_of_birth: '',
       phone: '',
       gender: 'male',
-      numberOfWarehouse: 0,
+      warehouse_id: 0,
     });
     handleCloseAddModal();
   };
@@ -66,43 +84,44 @@ const ManagerList = () => {
     <div className='container'>
       <h1>Manager List</h1>
       <div className='row w-100'>
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <Button className="button-add" variant="primary" onClick={handleShowAddModal}>
-          Add Manager
-        </Button>
-        <Form.Control
-        
-          type="text"
-          placeholder="Search by name"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          style={{ width: '300px' }}
-        />
-      </div>
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <Button className="button-add" variant="primary" onClick={handleShowAddModal}>
+            Add Manager
+          </Button>
+          <Form.Control
+            type="text"
+            placeholder="Search by name"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ width: '300px' }}
+          />
+        </div>
       </div>
       <table className="table text-center">
         <thead>
           <tr>
+            <th>No.</th>
             <th>Name</th>
             <th>Email</th>
             <th>Role</th>
             <th>Date of Birth</th>
             <th>Phone</th>
             <th>Gender</th>
-            <th>WarehousesID</th>
+            <th>Warehouse ID</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {filteredManagers.map((manager, index) => (
             <tr key={index}>
+              <td>{index + 1}</td>
               <td>{manager.name}</td>
               <td>{manager.email}</td>
               <td>{manager.role}</td>
-              <td>{manager.dateOfBirth}</td>
+              <td>{manager.date_of_birth}</td>
               <td>{manager.phone}</td>
               <td>{manager.gender}</td>
-              <td>{manager.numberOfWarehouse}</td>
+              <td>{manager.warehouse_id}</td>
               <td>
                 <Button variant="warning" onClick={() => handleEditManager(index)}>Edit</Button>
                 <Button variant="danger" onClick={() => handleDeleteManager(index)}>Delete</Button>
@@ -117,6 +136,7 @@ const ManagerList = () => {
           <Modal.Title>{editIndex !== null ? 'Edit Manager' : 'Add Manager'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          {error && <Alert variant="danger">{error}</Alert>}
           <Form.Group controlId="formBasicName">
             <Form.Label>Name</Form.Label>
             <Form.Control
@@ -150,8 +170,8 @@ const ManagerList = () => {
             <Form.Label>Date of Birth</Form.Label>
             <Form.Control
               type="date"
-              value={newManager.dateOfBirth}
-              onChange={(e) => setNewManager({ ...newManager, dateOfBirth: e.target.value })}
+              value={newManager.date_of_birth}
+              onChange={(e) => setNewManager({ ...newManager, date_of_birth: e.target.value })}
             />
           </Form.Group>
           <Form.Group controlId="formBasicPhone">
@@ -174,13 +194,13 @@ const ManagerList = () => {
               <option value="female">Female</option>
             </Form.Control>
           </Form.Group>
-          <Form.Group controlId="formBasicNumberOfWarehouses">
-            <Form.Label>Number of Warehouses</Form.Label>
+          <Form.Group controlId="formBasicWarehouseID">
+            <Form.Label>Warehouse ID</Form.Label>
             <Form.Control
               type="number"
-              placeholder="Enter number of warehouses"
-              value={newManager.numberOfWarehouse}
-              onChange={(e) => setNewManager({ ...newManager, numberOfWarehouse: parseInt(e.target.value) })}
+              placeholder="Enter warehouse ID"
+              value={newManager.warehouse_id}
+              onChange={(e) => setNewManager({ ...newManager, warehouse_id: parseInt(e.target.value) })}
             />
           </Form.Group>
         </Modal.Body>
@@ -193,99 +213,6 @@ const ManagerList = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-
-
-
-
-
-
-
-
-
-
-{/* ////////////////// */}
-  <Modal show={showAddModal} onHide={handleCloseAddModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>{editIndex !== null ? 'Edit Manager' : 'Add Manager'}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form.Group controlId="formBasicName">
-            <Form.Label>Name</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter name"
-              value={newManager.name}
-              onChange={(e) => setNewManager({ ...newManager, name: e.target.value })}
-            />
-          </Form.Group>
-          <Form.Group controlId="formBasicEmail">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              type="email"
-              placeholder="Enter email"
-              value={newManager.email}
-              onChange={(e) => setNewManager({ ...newManager, email: e.target.value })}
-            />
-          </Form.Group>
-          <Form.Group controlId="formBasicRole">
-            <Form.Label>Role</Form.Label>
-            <Form.Control
-              as="select"
-              value={newManager.role}
-              onChange={(e) => setNewManager({ ...newManager, role: e.target.value })}
-            >
-              <option value="manager">Manager</option>
-              <option value="admin">Admin</option>
-            </Form.Control>
-          </Form.Group>
-          <Form.Group controlId="formBasicDateOfBirth">
-            <Form.Label>Date of Birth</Form.Label>
-            <Form.Control
-              type="date"
-              value={newManager.dateOfBirth}
-              onChange={(e) => setNewManager({ ...newManager, dateOfBirth: e.target.value })}
-            />
-          </Form.Group>
-          <Form.Group controlId="formBasicPhone">
-            <Form.Label>Phone</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter phone"
-              value={newManager.phone}
-              onChange={(e) => setNewManager({ ...newManager, phone: e.target.value })}
-            />
-          </Form.Group>
-          <Form.Group controlId="formBasicGender">
-            <Form.Label>Gender</Form.Label>
-            <Form.Control
-              as="select"
-              value={newManager.gender}
-              onChange={(e) => setNewManager({ ...newManager, gender: e.target.value })}
-            >
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-            </Form.Control>
-          </Form.Group>
-          <Form.Group controlId="formBasicNumberOfWarehouses">
-            <Form.Label>Number of Warehouses</Form.Label>
-            <Form.Control
-              type="number"
-              placeholder="Enter number of warehouses"
-              value={newManager.numberOfWarehouse}
-              onChange={(e) => setNewManager({ ...newManager, numberOfWarehouse: parseInt(e.target.value) })}
-            />
-          </Form.Group>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseAddModal}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleAddManager}>
-            {editIndex !== null ? 'Save Changes' : 'Add'}
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
     </div>
   );
 };

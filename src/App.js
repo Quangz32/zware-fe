@@ -21,9 +21,9 @@ function App() {
            
             <div className="app">
             {/* <Product /> */}
-            <ProductList />
+            {/* <ProductList /> */}
       {/* <InventoryOutput /> */}
-      {/* <ManagerList /> */}
+      <ManagerList />
   
           </div>
     
