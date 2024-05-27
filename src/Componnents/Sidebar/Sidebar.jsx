@@ -60,9 +60,9 @@ const Sidebar = () => {
                     </Link>
                 </li>
                 <li className="sidebar-item">
-                    <Link to="/transaction" className="sidebar-link">
+                    <Link to="/outbound" className="sidebar-link">
                         <i className="bi bi-arrow-left-right"></i>
-                        <span>Transaction</span>
+                        <span>Outbound</span>
                     </Link>
                 </li>
             </ul>

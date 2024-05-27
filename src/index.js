@@ -11,6 +11,7 @@ import Profile from "./Pages/Profile";
 import Login from "./Pages/Login";
 import Home from "./Pages/Home";
 import UserManage from "./Pages/UserManage";
+import Outbound from "./Componnents/Transaction/Outbound/Outbound";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -24,6 +25,7 @@ root.render(
         {/* <Route path="/dashboard" element={<Sidebar />}></Route> */}
         <Route path="/profile" element={<Profile />}></Route>
         <Route path="/users" element={<UserManage />}></Route>
+        <Route path="/outbound" element={<Outbound />}></Route>
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

@@ -9,6 +9,7 @@ import Home from './Componnents/Home/Home';
 // import Transaction from './Componennts/Transaction/Transaction';
 import Login from './Componnents/LoginForm/LoginForm';
 import ManagerList from './Componnents/Management/ManagerList';
+import Outbound from './Componnents/Transaction/Outbound/Outbound';
 
 function App() {
     return (
@@ -21,8 +22,8 @@ function App() {
                         <Route path="/profile" element={<Profile />} />
                         <Route path="/users" element={<ManagerList />} />
                         {/* <Route path="/item" element={<Item />} />
-                        <Route path="/report" element={<Report />} />
-                        <Route path="/transaction" element={<Transaction />} /> */}
+                        <Route path="/report" element={<Report />} /> */}
+                        <Route path="/outbound" element={<Outbound />} />
                         <Route path="/login" element={<Login />} />
                     </Routes>
                 </main>
