@@ -10,6 +10,7 @@ import ManagerList from './Componnents/Management/ManagerList';
 // import AddProduct from './Componnents/Product/AddProduct';
 import InventoryOutput from './InventoryOutput/InventoryOutput';
 import ProductList from './Componnents/Product/ProductList';
+import WarehouseManagerment from './Componnents/WarehouseManagement/WarehouseManagement';
 function App() {
     return (
     //    <Profile />
@@ -23,8 +24,8 @@ function App() {
             {/* <Product /> */}
             {/* <ProductList /> */}
       {/* <InventoryOutput /> */}
-      <ManagerList />
-  
+      {/* <ManagerList /> */}
+<WarehouseManagerment />  
           </div>
     
     
