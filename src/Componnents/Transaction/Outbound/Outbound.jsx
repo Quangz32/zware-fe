@@ -1,4 +1,4 @@
-// src/components/Outbound.js
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Table, Button, Modal, Form, Row, Col } from 'react-bootstrap';
@@ -10,9 +10,11 @@ const Outbound = () => {
   const [details, setDetails] = useState([]);
   const [newTransaction, setNewTransaction] = useState({
     date: '',
-    maker: '',
+    maker_id: '',
+    maker_name: '',
     status: '',
-    destination: ''
+    destination: '',
+    quantity: '' // New field for quantity
   });
 
   useEffect(() => {
@@ -57,14 +59,16 @@ const Outbound = () => {
     setTransactions([...transactions, newTransactionWithId]);
     setNewTransaction({
       date: '',
-      maker: '',
+      maker_id: '',
+      maker_name: '',
       status: '',
-      destination: ''
+      destination: '',
+      quantity: '' // Reset quantity field
     });
   };
 
   return (
-    <div className="container mt-5">
+    <div className="container ">
       <h1 className="text-center mb-4">Outbound Transactions</h1>
       <Form onSubmit={handleSubmit} className="mb-4">
         <Row className="mb-3">
@@ -79,17 +83,27 @@ const Outbound = () => {
             />
           </Form.Group>
           <Form.Group as={Col}>
-            <Form.Label>Maker</Form.Label>
+            <Form.Label>Maker ID</Form.Label>
             <Form.Control 
               type="text" 
-              name="maker" 
-              value={newTransaction.maker} 
+              name="maker_id" 
+              value={newTransaction.maker_id} 
               onChange={handleInputChange} 
               required 
             />
           </Form.Group>
         </Row>
         <Row className="mb-3">
+          <Form.Group as={Col}>
+            <Form.Label>Maker Name</Form.Label>
+            <Form.Control 
+              type="text" 
+              name="maker_name" 
+              value={newTransaction.maker_name} 
+              onChange={handleInputChange} 
+              required 
+            />
+          </Form.Group>
           <Form.Group as={Col}>
             <Form.Label>Status</Form.Label>
             <Form.Control 
@@ -100,12 +114,24 @@ const Outbound = () => {
               required 
             />
           </Form.Group>
+        </Row>
+        <Row className="mb-3">
           <Form.Group as={Col}>
             <Form.Label>Destination</Form.Label>
             <Form.Control 
               type="text" 
               name="destination" 
               value={newTransaction.destination} 
+              onChange={handleInputChange} 
+              required 
+            />
+          </Form.Group>
+          <Form.Group as={Col}>
+            <Form.Label>Quantity</Form.Label>
+            <Form.Control 
+              type="number" 
+              name="quantity" 
+              value={newTransaction.quantity} 
               onChange={handleInputChange} 
               required 
             />
@@ -118,9 +144,11 @@ const Outbound = () => {
           <tr>
             <th>Transaction ID</th>
             <th>Date</th>
-            <th>Maker</th>
+            <th>Maker ID</th>
+            <th>Maker Name</th>
             <th>Status</th>
             <th>Destination Warehouse</th>
+            <th>Quantity</th> {/* New column for quantity */}
             <th>Details</th>
           </tr>
         </thead>
@@ -129,9 +157,11 @@ const Outbound = () => {
             <tr key={transaction.id}>
               <td>{transaction.id}</td>
               <td>{transaction.date}</td>
-              <td>{transaction.maker}</td>
+              <td>{transaction.maker_id}</td>
+              <td>{transaction.maker_name}</td>
               <td>{transaction.status}</td>
               <td>{transaction.destination}</td>
+              <td>{transaction.quantity}</td> {/* Display quantity */}
               <td>
                 <Button variant="primary" onClick={() => handleViewDetails(transaction)}>View</Button>
               </td>
