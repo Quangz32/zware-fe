@@ -1,7 +1,7 @@
 
 
 .container {
-  margin-top: 50px;
+  color: #dee2e6;
 }
 
 .text-center {
@@ -19,7 +19,7 @@
 .table {
   width: 100%;
   margin-bottom: 1rem;
-  color: #212529;
+  color: #fcfcfd;
 }
 
 .table th,
