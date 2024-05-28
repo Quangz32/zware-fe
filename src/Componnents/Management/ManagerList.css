@@ -1,8 +1,9 @@
 /* Custom CSS for Manager List */
 
 /* Styling for modal dialog */
-body{
-    background-color: #0c0058;
+
+body {
+  background-color: #0c0058;
 }
 h1{
     align-items: center;
@@ -51,7 +52,7 @@ h1{
   
   /* Styling for table header */
   .table th {
-    text-align: left;
+    text-align: center;
     padding: 10px;
     background-color: #f0f0f0;
     border-bottom: 2px solid #ddd;
@@ -126,10 +127,10 @@ h1{
 .button-add {
     margin-bottom: 20px;
     margin-left: auto; /* Căn nút sang bên phải */
-    padding: 20px 20px;
+    padding: 10px 10px;
     font-size: 1rem;
     font-weight: bold;
-    color: #0b0b6d;
+    color: #0c0058;
     background-color: #ffffff;
     border: none;
     border-radius: 5px;

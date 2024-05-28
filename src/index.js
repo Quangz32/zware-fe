@@ -4,14 +4,14 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-// import LoginForm from "./Componnents/LoginForm/LoginForm";
-// import Profile from "./Componnents/Profile/Profile";
-
 import Profile from "./Pages/Profile";
 import Login from "./Pages/Login";
 import Home from "./Pages/Home";
 import UserManage from "./Pages/UserManage";
-import Outbound from "./Componnents/Transaction/Outbound/Outbound";
+
+import ProductList from "./Componnents/Product/ProductList";
+
+import Outbound from "./Pages/Outbound";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -19,13 +19,14 @@ root.render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />}></Route>
-        <Route path="/login" element={<Login />}></Route>
+        <Route path="/login" render={() => <Login />}></Route>
         <Route path="/home" element={<Home />}></Route>
-
+        xml Copy
         {/* <Route path="/dashboard" element={<Sidebar />}></Route> */}
         <Route path="/profile" element={<Profile />}></Route>
         <Route path="/users" element={<UserManage />}></Route>
         <Route path="/outbound" element={<Outbound />}></Route>
+        <Route path="/products" element={<ProductList />}></Route>
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
