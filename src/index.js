@@ -12,6 +12,7 @@ import UserManage from "./Pages/UserManage";
 import ProductList from "./Componnents/Product/ProductList";
 
 import Outbound from "./Pages/Outbound";
+import TestAxios from "./Pages/TestAxios";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -27,6 +28,7 @@ root.render(
         <Route path="/users" element={<UserManage />}></Route>
         <Route path="/outbound" element={<Outbound />}></Route>
         <Route path="/products" element={<ProductList />}></Route>
+        <Route path="/axios" element={<TestAxios />}></Route>
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
