@@ -1,0 +1,53 @@
+
+
+.container {
+  color: #dee2e6;
+
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mt-5 {
+  margin-top: 3rem;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem;
+  width: 80%;
+}
+
+.table {
+  width: 80%;
+  margin-bottom: 1rem;
+  color: #fcfcfd;
+}
+
+.table th,
+.table td {
+  padding: 0.75rem;
+  vertical-align: middle; /* Ensures vertical alignment to middle */
+  border-top: 1px solid #dee2e6;
+  text-align: center; /* Ensures text is center-aligned horizontally */
+}
+
+.table thead th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.table tbody + tbody {
+  border-top: 2px solid #dee2e6;
+  
+}
+
+.modal-header,
+.modal-footer {
+  display: flex;
+  justify-content: center; /* Centers content horizontally */
+}
+
+.modal-title {
+  margin: 0 auto; /* Centers the title */
+}

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Table, Button, Modal, Form, Row, Col } from 'react-bootstrap';
@@ -14,11 +13,11 @@ const Outbound = () => {
     maker_name: '',
     status: '',
     destination: '',
-    quantity: '' // New field for quantity
   });
+  const [quantityMap, setQuantityMap] = useState({});
+  const [newRows, setNewRows] = useState([]);
 
   useEffect(() => {
-    // Fetch the transactions when the component mounts
     axios.get('/api/outbound-transactions')
       .then(response => {
         setTransactions(response.data);
@@ -30,10 +29,18 @@ const Outbound = () => {
 
   const handleViewDetails = (transaction) => {
     setSelectedTransaction(transaction);
-    // Fetch the transaction details
     axios.get(`/api/outbound-transactions/${transaction.id}/details`)
       .then(response => {
         setDetails(response.data);
+        const initialValues = response.data.reduce((acc, detail) => {
+          acc[detail.item_id] = {
+            item_id: detail.item_id,
+            quantity: detail.quantity || '',
+            zone: detail.zone || ''
+          };
+          return acc;
+        }, {});
+        setQuantityMap(initialValues);
       })
       .catch(error => {
         console.error('There was an error fetching the transaction details!', error);
@@ -43,6 +50,8 @@ const Outbound = () => {
   const handleCloseModal = () => {
     setSelectedTransaction(null);
     setDetails([]);
+    setQuantityMap({});
+    setNewRows([]);
   };
 
   const handleInputChange = (e) => {
@@ -50,11 +59,34 @@ const Outbound = () => {
     setNewTransaction({ ...newTransaction, [name]: value });
   };
 
+  const handleQuantityChange = (e, itemId, field) => {
+    const { value } = e.target;
+    setQuantityMap({
+      ...quantityMap,
+      [itemId]: {
+        ...quantityMap[itemId],
+        [field]: value
+      }
+    });
+  };
+
+  const handleNewRowChange = (e, index, field) => {
+    const { value } = e.target;
+    const updatedRows = newRows.map((row, i) => 
+      i === index ? { ...row, [field]: value } : row
+    );
+    setNewRows(updatedRows);
+  };
+
+  const addNewRow = () => {
+    setNewRows([...newRows, { item_id: '', quantity: '', zone: '' }]);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const newTransactionWithId = {
       ...newTransaction,
-      id: transactions.length + 1, // Generate a new id for simplicity
+      id: transactions.length + 1,
     };
     setTransactions([...transactions, newTransactionWithId]);
     setNewTransaction({
@@ -63,12 +95,30 @@ const Outbound = () => {
       maker_name: '',
       status: '',
       destination: '',
-      quantity: '' // Reset quantity field
     });
   };
 
+  const handleSaveDetails = () => {
+    const updatedDetails = details.map(detail => ({
+      ...detail,
+      item_id: quantityMap[detail.item_id].item_id,
+      quantity: quantityMap[detail.item_id].quantity,
+      zone: quantityMap[detail.item_id].zone,
+    }));
+    const newDetailRows = newRows.map(row => ({
+      item_id: row.item_id,
+      quantity: row.quantity,
+      zone: row.zone,
+    }));
+    setDetails([...updatedDetails, ...newDetailRows]);
+    setSelectedTransaction(null);
+    setDetails([]);
+    setQuantityMap({});
+    setNewRows([]);
+  };
+
   return (
-    <div className="container ">
+    <div className="container">
       <h1 className="text-center mb-4">Outbound Transactions</h1>
       <Form onSubmit={handleSubmit} className="mb-4">
         <Row className="mb-3">
@@ -126,16 +176,6 @@ const Outbound = () => {
               required 
             />
           </Form.Group>
-          <Form.Group as={Col}>
-            <Form.Label>Quantity</Form.Label>
-            <Form.Control 
-              type="number" 
-              name="quantity" 
-              value={newTransaction.quantity} 
-              onChange={handleInputChange} 
-              required 
-            />
-          </Form.Group>
         </Row>
         <Button variant="primary" type="submit">Add Transaction</Button>
       </Form>
@@ -148,7 +188,6 @@ const Outbound = () => {
             <th>Maker Name</th>
             <th>Status</th>
             <th>Destination Warehouse</th>
-            <th>Quantity</th> {/* New column for quantity */}
             <th>Details</th>
           </tr>
         </thead>
@@ -161,9 +200,8 @@ const Outbound = () => {
               <td>{transaction.maker_name}</td>
               <td>{transaction.status}</td>
               <td>{transaction.destination}</td>
-              <td>{transaction.quantity}</td> {/* Display quantity */}
               <td>
-                <Button variant="primary" onClick={() => handleViewDetails(transaction)}>View</Button>
+                <Button variant="primary" onClick={() => handleViewDetails(transaction)}>Detail</Button>
               </td>
             </tr>
           ))}
@@ -183,18 +221,69 @@ const Outbound = () => {
               </tr>
             </thead>
             <tbody>
-              {details.map((detail) => (
+              {details.map((detail, index) => (
                 <tr key={detail.item_id}>
-                  <td>{detail.item_id}</td>
-                  <td>{detail.quantity}</td>
-                  <td>{detail.zone}</td>
+                  <td>
+                    <Form.Control 
+                      type="text" 
+                      value={quantityMap[detail.item_id].item_id} 
+                      onChange={(e) => handleQuantityChange(e, detail.item_id, 'item_id')} 
+                      required 
+                    />
+                  </td>
+                  <td>
+                    <Form.Control 
+                      type="number" 
+                      value={quantityMap[detail.item_id].quantity} 
+                      onChange={(e) => handleQuantityChange(e, detail.item_id, 'quantity')} 
+                      required 
+                    />
+                  </td>
+                  <td>
+                    <Form.Control 
+                      type="text" 
+                      value={quantityMap[detail.item_id].zone} 
+                      onChange={(e) => handleQuantityChange(e, detail.item_id, 'zone')} 
+                      required 
+                    />
+                  </td>
+                </tr>
+              ))}
+              {newRows.map((row, index) => (
+                <tr key={index}>
+                  <td>
+                    <Form.Control 
+                      type="text" 
+                      value={row.item_id} 
+                      onChange={(e) => handleNewRowChange(e, index, 'item_id')} 
+                      required 
+                    />
+                  </td>
+                  <td>
+                    <Form.Control 
+                      type="number" 
+                      value={row.quantity} 
+                      onChange={(e) => handleNewRowChange(e, index, 'quantity')} 
+                      required 
+                    />
+                  </td>
+                  <td>
+                    <Form.Control 
+                      type="text" 
+                      value={row.zone} 
+                      onChange={(e) => handleNewRowChange(e, index, 'zone')} 
+                      required 
+                    />
+                  </td>
                 </tr>
               ))}
             </tbody>
           </Table>
+          <Button variant="secondary" onClick={addNewRow}>Add New Row</Button>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseModal}>Close</Button>
+          <Button variant="primary" onClick={handleSaveDetails}>Save</Button>
         </Modal.Footer>
       </Modal>
     </div>
