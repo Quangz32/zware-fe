@@ -100,7 +100,7 @@ const Profile = () => {
                 <form onSubmit={handleSubmit}>
                   <div className="p-3 py-5">
                     <div className="d-flex justify-content-between align-items-center mb-3">
-                      <h4 className="text-right">Profile</h4>
+                      <h1 className="text-right title-profile">Profile</h1>
                     </div>
                     <div className="row mt-2">
                       <div className="col-md-6">

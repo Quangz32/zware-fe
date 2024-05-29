@@ -1,13 +1,12 @@
-body {
-    background: #070825;
-}
 
 .container.centered-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    background-color: #070825;
+    width: 80%;
+    height: 91vh;
+    padding-top: 20px;
+    
 }
 
 .form-control:focus {
@@ -49,4 +48,8 @@ body {
     color: #fff;
     cursor: pointer;
     border: solid 1px #BA68C8;
+}
+.title-profile{
+    color: #070825;
+    
 }
