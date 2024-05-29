@@ -12,8 +12,8 @@ import UserManage from "./Pages/UserManage";
 import ProductList from "./Componnents/Product/ProductList";
 
 import Outbound from "./Pages/Outbound";
+import TestAxios from "./Pages/TestAxios";
 import Inbound from "./Componnents/Transaction/Inbound/Inbound";
-
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
@@ -29,6 +29,7 @@ root.render(
         <Route path="/outbound" element={<Outbound />}></Route>
         <Route path="/inbound" element={<Inbound />}></Route>
         <Route path="/products" element={<ProductList />}></Route>
+        <Route path="/axios" element={<TestAxios />}></Route>
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
