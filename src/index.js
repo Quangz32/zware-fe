@@ -20,7 +20,7 @@ root.render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />}></Route>
-        <Route path="/login" render={() => <Login />}></Route>
+        <Route path="/login" element={<Login />}></Route>
         <Route path="/home" element={<Home />}></Route>
         xml Copy
         {/* <Route path="/dashboard" element={<Sidebar />}></Route> */}
