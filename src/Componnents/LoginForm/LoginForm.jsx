@@ -1,52 +1,56 @@
-import React, { useState } from 'react';
-import './LoginForm.css';
-import { FaUser, FaLock } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import "./LoginForm.css";
+import { FaUser, FaLock } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import MyAxios from "../../Utils/MyAxios";
 
 // Function to call the authentication API
 const authenticateUser = async (username, password) => {
-    const response = await fetch('Endpoint API URL link', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json', // gửi đi ở định dạng JSON
-        },
-        body: JSON.stringify({ username, password }),
+    const response = await MyAxios.post("auth/login", {
+        email: username,
+        password: password,
+    }).catch((e) => {
+        console.log(e);
     });
 
-    if (!response.ok) {
-        const message = await response.json();
-        throw new Error(message.error || 'Invalid username or password');
-    }
+    console.log(response);
 
-    return await response.json();
+    // if (response && !response.status == 200) {
+    //     // const message = await response.json();
+    //     // throw new Error(message.error || 'Invalid username or password');
+    // }
+
+    return response ? response.data : null;
 };
 
 const LoginForm = () => {
     const navigate = useNavigate();
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         setLoading(true);
-        setError('');
+        setError("");
 
         // Perform validation
-        if (!username || !password) {
-            setError('Username and password are required');
+        if (!email || !password) {
+            setError("Email and password are required");
             setLoading(false);
             return;
         }
 
         try {
-            // Call the API to authenticate the user
-            await authenticateUser(username, password);
-            // If authentication is successful, navigate to the home page
-            navigate('/home');
+            const jwt = await authenticateUser(email, password);
+            if (jwt) {
+                localStorage.setItem("jwt-token", jwt);
+                navigate("/home");
+            } else {
+                setError("Invalid email or password")
+            }
         } catch (err) {
-            // If authentication fails, set the error message
             setError(err.message);
         } finally {
             setLoading(false);
@@ -62,9 +66,9 @@ const LoginForm = () => {
                     <div className="input-box">
                         <input
                             type="text"
-                            placeholder="Username"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             required
                         />
                         <FaUser className="icon" />
@@ -85,8 +89,8 @@ const LoginForm = () => {
                         </label>
                         <a href="..">Forgot Password</a>
                     </div>
-                    <button type="submit" className='login' disabled={loading}>
-                        {loading ? 'Logging in...' : 'Login'}
+                    <button type="submit" className="login" disabled={loading}>
+                        {loading ? "Logging in..." : "Login"}
                     </button>
                 </form>
             </div>

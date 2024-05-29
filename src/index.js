@@ -12,6 +12,7 @@ import UserManage from "./Pages/UserManage";
 import ProductList from "./Componnents/Product/ProductList";
 
 import Outbound from "./Pages/Outbound";
+import TestAxios from "./Pages/TestAxios";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -19,7 +20,7 @@ root.render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />}></Route>
-        <Route path="/login" render={() => <Login />}></Route>
+        <Route path="/login" element={<Login />}></Route>
         <Route path="/home" element={<Home />}></Route>
         xml Copy
         {/* <Route path="/dashboard" element={<Sidebar />}></Route> */}
@@ -27,6 +28,7 @@ root.render(
         <Route path="/users" element={<UserManage />}></Route>
         <Route path="/outbound" element={<Outbound />}></Route>
         <Route path="/products" element={<ProductList />}></Route>
+        <Route path="/axios" element={<TestAxios />}></Route>
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
