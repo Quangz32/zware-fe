@@ -11,8 +11,10 @@ import Login from "./Componnents/LoginForm/LoginForm";
 // import ManagerList from "./Componnents/Management/ManagerList";
 import Outbound from "./Componnents/Transaction/Outbound/Outbound";
 
+
 import ManagerList from "./Componnents/Management/ManagerList";
 import ProductList from "./Componnents/Product/ProductList";
+import Inbound from "./Componnents/Transaction/Inbound/Inbound";
 
 function App() {
   return (
@@ -25,6 +27,7 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/users" element={<ManagerList />} />
             <Route path="/outbound" element={<Outbound />} />
+            <Route path="/inbound" element={<Inbound />} />
             <Route path="/login" element={<Login />} />
 
             <Route path="/products" element={<ProductList />} />

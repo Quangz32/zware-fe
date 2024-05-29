@@ -12,6 +12,7 @@ import UserManage from "./Pages/UserManage";
 import ProductList from "./Componnents/Product/ProductList";
 
 import Outbound from "./Pages/Outbound";
+import Inbound from "./Componnents/Transaction/Inbound/Inbound";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -19,13 +20,14 @@ root.render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />}></Route>
-        <Route path="/login" render={() => <Login />}></Route>
+        <Route path="/login" element={ <Login />}></Route>
         <Route path="/home" element={<Home />}></Route>
-        xml Copy
+        
         {/* <Route path="/dashboard" element={<Sidebar />}></Route> */}
         <Route path="/profile" element={<Profile />}></Route>
         <Route path="/users" element={<UserManage />}></Route>
         <Route path="/outbound" element={<Outbound />}></Route>
+        <Route path="/inbound" element={<Inbound />}></Route>
         <Route path="/products" element={<ProductList />}></Route>
       </Routes>
     </BrowserRouter>

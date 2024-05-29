@@ -5,7 +5,7 @@ const profile = ()=>{
     return (
     <>
         <div className="d-flex">
-            <div className="col-auto"><Sidebar></Sidebar></div>
+            <div className="col-auto "><Sidebar></Sidebar></div>
             <div className="col"><ManagerList></ManagerList></div>
         </div>
     </>
@@ -13,3 +13,4 @@ const profile = ()=>{
 }
 
 export default profile
+

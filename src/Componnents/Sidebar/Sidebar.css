@@ -28,15 +28,6 @@ h1 {
   display: flex;
 }
 
-.main {
-  min-height: 100vh;
-  width: 100%;
-  overflow: auto; /* Allow scrolling */
-  transition: all 0.35s ease-in-out;
-  background-color: #fafbfe;
-  margin-left: 70px; /* Space for the sidebar */
-}
-
 #sidebar {
   width: 70px;
   min-width: 70px;
