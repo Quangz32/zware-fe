@@ -18,7 +18,7 @@ const Sidebar = () => {
                     <i className="bi bi-list"></i>
                 </button>
                 <div className="sidebar-logo">
-                    <Link to="/">Warehouse Management</Link>
+                    <Link to="/home">Warehouse Management</Link>
                 </div>
             </div>
             <div className="profile">

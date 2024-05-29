@@ -50,7 +50,8 @@ h1 {
   background-color: transparent;
   cursor: pointer;
   border: 0;
-  padding: 1rem 1.5rem;
+  padding: 1rem 1rem;
+  width: 150px;
 }
 
 .toggle-btn i {

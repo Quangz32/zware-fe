@@ -15,7 +15,7 @@
   width: 80%;
 }
 
-.table {
+.table-fix {
   width: 80%;
   margin-bottom: 1rem;
   color: #fcfcfd;
@@ -24,9 +24,9 @@
 .table th,
 .table td {
   padding: 0.75rem;
-  vertical-align: middle; /* Ensures vertical alignment to middle */
+  vertical-align: middle; 
   border-top: 1px solid #dee2e6;
-  text-align: center; /* Ensures text is center-aligned horizontally */
+  text-align: center; 
 }
 
 .table thead th {
@@ -39,11 +39,13 @@
   
 }
 
-.modal-header,
+.modal-header{
+  padding-left: 120px;
+}
 .modal-footer {
   display: flex;
   justify-content: center; 
-  padding-left: 120px;
+ 
 }
 
 .modal-title {
@@ -52,4 +54,8 @@
 
 .modal-body .btn-secondary {
   margin-top: 1rem;
+}
+
+.box-fix{
+  width: 80%;
 }

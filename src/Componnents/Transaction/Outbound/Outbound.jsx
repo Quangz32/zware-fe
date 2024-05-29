@@ -117,6 +117,18 @@ const Outbound = () => {
     setNewRows([]);
   };
 
+  const handleDeleteRow = (itemId) => {
+    const updatedDetails = details.filter(detail => detail.item_id !== itemId);
+    const { [itemId]: _, ...updatedQuantityMap } = quantityMap;
+    setDetails(updatedDetails);
+    setQuantityMap(updatedQuantityMap);
+  };
+
+  const handleDeleteNewRow = (index) => {
+    const updatedRows = newRows.filter((_, i) => i !== index);
+    setNewRows(updatedRows);
+  };
+
   return (
     <div className="container">
       <h1 className="text-center mb-4">Outbound Transactions</h1>
@@ -218,6 +230,7 @@ const Outbound = () => {
                 <th>Item ID</th>
                 <th>Quantity</th>
                 <th>Zone</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -247,6 +260,9 @@ const Outbound = () => {
                       required 
                     />
                   </td>
+                  <td>
+                    <Button variant="danger" onClick={() => handleDeleteRow(detail.item_id)}>Delete</Button>
+                  </td>
                 </tr>
               ))}
               {newRows.map((row, index) => (
@@ -274,6 +290,9 @@ const Outbound = () => {
                       onChange={(e) => handleNewRowChange(e, index, 'zone')} 
                       required 
                     />
+                  </td>
+                  <td>
+                    <Button variant="danger" onClick={() => handleDeleteNewRow(index)}>Delete</Button>
                   </td>
                 </tr>
               ))}
