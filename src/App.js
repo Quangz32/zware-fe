@@ -1,40 +1,33 @@
-import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Sidebar from "./Componnents/Sidebar/Sidebar";
-import Profile from "./Componnents/Profile/Profile";
-import Home from "./Componnents/Home/Home";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Profile from "./Pages/Profile";
+import Login from "./Pages/Login";
+import Home from "./Pages/Home";
+import UserManage from "./Pages/UserManage";
 
-// import Item from './Componennts/Item/Item';
-// import Report from './Componennts/Report/Report';
-// import Transaction from './Componennts/Transaction/Transaction';
-import Login from "./Componnents/LoginForm/LoginForm";
-// import ManagerList from "./Componnents/Management/ManagerList";
-import Outbound from "./Componnents/Transaction/Outbound/Outbound";
-
-
-import ManagerList from "./Componnents/Management/ManagerList";
 import ProductList from "./Componnents/Product/ProductList";
+
+import Outbound from "./Pages/Outbound";
+import TestAxios from "./Pages/TestAxios";
 import Inbound from "./Componnents/Transaction/Inbound/Inbound";
 
 function App() {
   return (
-    <Router>
-      <div>
-        <Sidebar />
-        <main className="main">
-          <Routes>
-            <Route path="/home" element={<Home />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/users" element={<ManagerList />} />
-            <Route path="/outbound" element={<Outbound />} />
-            <Route path="/inbound" element={<Inbound />} />
-            <Route path="/login" element={<Login />} />
-
-            <Route path="/products" element={<ProductList />} />
-          </Routes>
-        </main>
-      </div>
-    </Router>
+    
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<App />}></Route>
+        <Route path="/login" element={ <Login />}></Route>
+        <Route path="/home" element={<Home />}></Route>
+        
+        {/* <Route path="/dashboard" element={<Sidebar />}></Route> */}
+        <Route path="/profile" element={<Profile />}></Route>
+        <Route path="/users" element={<UserManage />}></Route>
+        <Route path="/outbound" element={<Outbound />}></Route>
+        <Route path="/inbound" element={<Inbound />}></Route>
+        <Route path="/products" element={<ProductList />}></Route>
+        <Route path="/axios" element={<TestAxios />}></Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
