@@ -7,6 +7,7 @@ const Outbound = () => {
   const [transactions, setTransactions] = useState([]);
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [details, setDetails] = useState([]);
+  const [showFormModal, setShowFormModal] = useState(false);
   const [newTransaction, setNewTransaction] = useState({
     date: '',
     maker_id: '',
@@ -54,6 +55,17 @@ const Outbound = () => {
     setNewRows([]);
   };
 
+  const handleFormModalClose = () => {
+    setShowFormModal(false);
+    setNewTransaction({
+      date: '',
+      maker_id: '',
+      maker_name: '',
+      status: '',
+      destination: '',
+    });
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewTransaction({ ...newTransaction, [name]: value });
@@ -89,13 +101,7 @@ const Outbound = () => {
       id: transactions.length + 1,
     };
     setTransactions([...transactions, newTransactionWithId]);
-    setNewTransaction({
-      date: '',
-      maker_id: '',
-      maker_name: '',
-      status: '',
-      destination: '',
-    });
+    handleFormModalClose();
   };
 
   const handleSaveDetails = () => {
@@ -130,68 +136,10 @@ const Outbound = () => {
   };
 
   return (
-    <div className="container">
+    <div className=" longfix1">
       <h1 className="text-center mb-4">Outbound Transactions</h1>
-      <Form onSubmit={handleSubmit} className="mb-4">
-        <Row className="mb-3">
-          <Form.Group as={Col}>
-            <Form.Label>Date</Form.Label>
-            <Form.Control 
-              type="date" 
-              name="date" 
-              value={newTransaction.date} 
-              onChange={handleInputChange} 
-              required 
-            />
-          </Form.Group>
-          <Form.Group as={Col}>
-            <Form.Label>Maker ID</Form.Label>
-            <Form.Control 
-              type="text" 
-              name="maker_id" 
-              value={newTransaction.maker_id} 
-              onChange={handleInputChange} 
-              required 
-            />
-          </Form.Group>
-        </Row>
-        <Row className="mb-3">
-          <Form.Group as={Col}>
-            <Form.Label>Maker Name</Form.Label>
-            <Form.Control 
-              type="text" 
-              name="maker_name" 
-              value={newTransaction.maker_name} 
-              onChange={handleInputChange} 
-              required 
-            />
-          </Form.Group>
-          <Form.Group as={Col}>
-            <Form.Label>Status</Form.Label>
-            <Form.Control 
-              type="text" 
-              name="status" 
-              value={newTransaction.status} 
-              onChange={handleInputChange} 
-              required 
-            />
-          </Form.Group>
-        </Row>
-        <Row className="mb-3">
-          <Form.Group as={Col}>
-            <Form.Label>Destination</Form.Label>
-            <Form.Control 
-              type="text" 
-              name="destination" 
-              value={newTransaction.destination} 
-              onChange={handleInputChange} 
-              required 
-            />
-          </Form.Group>
-        </Row>
-        <Button variant="primary" type="submit">Add Transaction</Button>
-      </Form>
-      <Table striped bordered hover>
+      <Button variant="primary" className="longbutton-fix1" onClick={() => setShowFormModal(true)}>Add New Transaction</Button>
+      <Table striped bordered hover className="mt-3">
         <thead>
           <tr>
             <th>Transaction ID</th>
@@ -304,6 +252,72 @@ const Outbound = () => {
           <Button variant="secondary" onClick={handleCloseModal}>Close</Button>
           <Button variant="primary" onClick={handleSaveDetails}>Save</Button>
         </Modal.Footer>
+      </Modal>
+      <Modal show={showFormModal} onHide={handleFormModalClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add New Transaction</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleSubmit}>
+            <Row className="mb-3">
+              <Form.Group as={Col}>
+                <Form.Label>Date</Form.Label>
+                <Form.Control 
+                  type="date" 
+                  name="date" 
+                  value={newTransaction.date} 
+                  onChange={handleInputChange} 
+                  required 
+                />
+              </Form.Group>
+              <Form.Group as={Col}>
+                <Form.Label>Maker ID</Form.Label>
+                <Form.Control 
+                  type="text" 
+                  name="maker_id" 
+                  value={newTransaction.maker_id} 
+                  onChange={handleInputChange} 
+                  required 
+                />
+              </Form.Group>
+            </Row>
+            <Row className="mb-3">
+              <Form.Group as={Col}>
+                <Form.Label>Maker Name</Form.Label>
+                <Form.Control 
+                  type="text" 
+                  name="maker_name" 
+                  value={newTransaction.maker_name} 
+                  onChange={handleInputChange} 
+                  required 
+                />
+              </Form.Group>
+              <Form.Group as={Col}>
+                <Form.Label>Status</Form.Label>
+                <Form.Control 
+                  type="text" 
+                  name="status" 
+                  value={newTransaction.status} 
+                  onChange={handleInputChange} 
+                  required 
+                />
+              </Form.Group>
+            </Row>
+            <Row className="mb-3">
+              <Form.Group as={Col}>
+                <Form.Label>Destination</Form.Label>
+                <Form.Control 
+                  type="text" 
+                  name="destination" 
+                  value={newTransaction.destination} 
+                  onChange={handleInputChange} 
+                  required 
+                />
+              </Form.Group>
+            </Row>
+            <Button variant="secondary" type="submit">Add Transaction</Button>
+          </Form>
+        </Modal.Body>
       </Modal>
     </div>
   );
