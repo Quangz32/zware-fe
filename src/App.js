@@ -8,7 +8,7 @@ import ProductList from "./Componnents/Product/ProductList";
 
 import Outbound from "./Pages/Outbound";
 import TestAxios from "./Pages/TestAxios";
-import Inbound from "./Componnents/Transaction/Inbound/Inbound";
+import Inbound from "./Pages/Inbound";
 
 function App() {
   return (

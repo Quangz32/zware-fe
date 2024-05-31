@@ -62,7 +62,7 @@ const Sidebar = () => {
                 <li className="sidebar-item">
                     <Link to="/outbound" className="sidebar-link">
                         <i className="bi bi-arrow-left-right"></i>
-                        <span>Outbound</span>
+                        <span>Transaction</span>
                     </Link>
                 </li>
             </ul>

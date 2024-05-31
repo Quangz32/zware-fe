@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Table, Button, Modal, Form, Row, Col } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import './Outbound.css';
 
 const Outbound = () => {
@@ -17,6 +18,8 @@ const Outbound = () => {
   });
   const [quantityMap, setQuantityMap] = useState({});
   const [newRows, setNewRows] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios.get('/api/outbound-transactions')
@@ -136,9 +139,12 @@ const Outbound = () => {
   };
 
   return (
-    <div className=" longfix1">
+    <div className="longfix1">
       <h1 className="text-center mb-4">Outbound Transactions</h1>
-      <Button variant="primary" className="longbutton-fix1" onClick={() => setShowFormModal(true)}>Add New Transaction</Button>
+      <div className="d-flex justify-content-between mb-3">
+        <Button variant="primary" className="longbutton-fix1" onClick={() => setShowFormModal(true)}>Add New Transaction</Button>
+        <Button variant="secondary" className="longbutton-fix1 long-move-buttonswitchtransaction" onClick={() => navigate('/inbound')}>Go to Inbound Transactions</Button>
+      </div>
       <Table striped bordered hover className="mt-3">
         <thead>
           <tr>
