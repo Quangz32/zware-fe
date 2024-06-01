@@ -92,14 +92,14 @@ const ProductList = () => {
   };
 
   return (
-    <div className='container'>
+    <div className='longfix1'>
       <h1>Product List</h1>
       <div className='row w-100'>
         <div className="d-flex justify-content-between align-items-center mb-3">
-          <Button className="button-add" variant="primary" onClick={handleShowAddModal}>
+          <Button className="button-add longbuttonfix2" style={{ marginLeft: '140px' }}  variant="primary" onClick={handleShowAddModal}>
             Add Product
           </Button>
-          <Form.Control
+          <Form.Control className='longfixbutton3'
             type="text"
             placeholder="Search by name"
             value={searchTerm}

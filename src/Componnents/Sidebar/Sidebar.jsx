@@ -48,9 +48,9 @@ const Sidebar = () => {
                     </Link>
                 </li>
                 <li className="sidebar-item">
-                    <Link to="/item" className="sidebar-link">
+                    <Link to="/products" className="sidebar-link">
                         <i className="bi bi-boxes"></i>
-                        <span>Item</span>
+                        <span>Product</span>
                     </Link>
                 </li>
                 <li className="sidebar-item">

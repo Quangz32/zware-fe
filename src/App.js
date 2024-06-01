@@ -4,7 +4,7 @@ import Login from "./Pages/Login";
 import Home from "./Pages/Home";
 import UserManage from "./Pages/UserManage";
 
-import ProductList from "./Componnents/Product/ProductList";
+import ProductList from "./Pages/Product";
 
 import Outbound from "./Pages/Outbound";
 import TestAxios from "./Pages/TestAxios";
