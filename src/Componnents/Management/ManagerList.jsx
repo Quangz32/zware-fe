@@ -32,7 +32,7 @@ const ManagerList = () => {
   };
 
   const handleCloseViewModal = () => setShowViewModal(false);
-  
+
   const validateManager = (manager) => {
     if (!manager.name || !manager.email || !manager.date_of_birth || !manager.phone || !manager.warehouse_id) {
       return 'Please fill in all fields.';
@@ -115,40 +115,51 @@ const ManagerList = () => {
           />
         </div>
       </div>
-      <table className="table text-center">
-        <thead>
-          <tr>
-            <th>No.</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Date of Birth</th>
-            <th>Phone</th>
-            <th>Gender</th>
-            <th>Warehouse ID</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredManagers.map((manager, index) => (
-            <tr key={index}>
-              <td>{index + 1}</td>
-              <td>{manager.name}</td>
-              <td>{manager.email}</td>
-              <td>{manager.role}</td>
-              <td>{manager.date_of_birth}</td>
-              <td>{manager.phone}</td>
-              <td>{manager.gender}</td>
-              <td>{manager.warehouse_id}</td>
-              <td>
-                <Button variant="info" onClick={() => handleViewManager(index)}>View</Button>{' '}
-                <Button variant="warning" onClick={() => handleEditManager(index)}>Edit</Button>{' '}
-                <Button variant="danger" onClick={() => handleDeleteManager(index)}>Delete</Button>
-              </td>
+      {filteredManagers.length > 0 ? (
+        <table className="table text-center">
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Date of Birth</th>
+              <th>Phone</th>
+              <th>Gender</th>
+              <th>Warehouse ID</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredManagers.map((manager, index) => (
+              <tr key={index}>
+                <td>{index + 1}</td>
+                <td>{manager.name}</td>
+                <td>{manager.email}</td>
+                <td>{manager.role}</td>
+                <td>{manager.date_of_birth}</td>
+                <td>{manager.phone}</td>
+                <td>{manager.gender}</td>
+                <td>{manager.warehouse_id}</td>
+                <td>
+                  <div className='row w-60 mt-3'>
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                      <Button variant="info" onClick={() => handleViewManager(index)}>View</Button>{' '}
+                      <Button variant="warning" onClick={() => handleEditManager(index)}>Edit</Button>{' '}
+                      <Button variant="danger" onClick={() => handleDeleteManager(index)}>Delete</Button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        // <div className="text-center mt-3">
+        //   <Alert variant="info">No managers found.</Alert>
+        // </div>
+        <p style={{ color: 'white' }}>No managers found.</p>
+      )}
 
       <Modal show={showAddModal} onHide={handleCloseAddModal}>
         <Modal.Header closeButton>
@@ -224,12 +235,15 @@ const ManagerList = () => {
           </Form.Group>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseAddModal}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleAddManager}>
-            {editIndex !== null ? 'Save Changes' : 'Add'}
-          </Button>
+          <div className="d-flex justify-content-start w-60">
+            <Button variant="secondary mt-2 " onClick={handleCloseAddModal}>
+              Close
+            </Button>
+
+            <Button variant="btn btn-primary mt-2" onClick={handleAddManager}>
+              {editIndex !== null ? 'Save Changes' : 'Add'}
+            </Button>
+          </div>
         </Modal.Footer>
       </Modal>
 
