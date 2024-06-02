@@ -101,7 +101,7 @@ const ManagerList = () => {
   return (
     <div className='longfix1'>
       <h1>Manager List</h1>
-      <div className='row w-100'>
+      <div className='row w-60'>
         <div className="d-flex justify-content-between align-items-center mb-3">
           <Button className="button-add longbuttonfix2" style={{ marginLeft: '140px' }} variant="primary" onClick={handleShowAddModal}>
             Add Manager
