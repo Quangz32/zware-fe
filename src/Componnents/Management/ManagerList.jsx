@@ -4,6 +4,7 @@ import './ManagerList.css';
 
 const ManagerList = () => {
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
   const [managers, setManagers] = useState([]);
   const [newManager, setNewManager] = useState({
     name: '',
@@ -12,8 +13,9 @@ const ManagerList = () => {
     date_of_birth: '',
     phone: '',
     gender: 'male',
-    warehouse_id: 0,
+    warehouse_id: '',
   });
+  const [viewManager, setViewManager] = useState(null);
   const [editIndex, setEditIndex] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [error, setError] = useState('');
@@ -29,8 +31,10 @@ const ManagerList = () => {
     setError('');
   };
 
+  const handleCloseViewModal = () => setShowViewModal(false);
+  
   const validateManager = (manager) => {
-    if (!manager.name || !manager.email || !manager.date_of_birth || !manager.phone || manager.warehouse_id === 0) {
+    if (!manager.name || !manager.email || !manager.date_of_birth || !manager.phone || !manager.warehouse_id) {
       return 'Please fill in all fields.';
     }
     if (!/\S+@\S+\.\S+/.test(manager.email)) return 'Email is invalid.';
@@ -58,7 +62,7 @@ const ManagerList = () => {
       date_of_birth: '',
       phone: '',
       gender: 'male',
-      warehouse_id: 0,
+      warehouse_id: '',
     });
     handleCloseAddModal();
   };
@@ -76,9 +80,23 @@ const ManagerList = () => {
     handleShowAddModal();
   };
 
-  const filteredManagers = managers.filter((manager) =>
-    manager.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleViewManager = (index) => {
+    setViewManager(managers[index]);
+    setShowViewModal(true);
+  };
+
+  const filteredManagers = managers.filter((manager) => {
+    const searchString = searchTerm.toLowerCase();
+    return (
+      manager.name.toLowerCase().includes(searchString) ||
+      manager.email.toLowerCase().includes(searchString) ||
+      manager.role.toLowerCase().includes(searchString) ||
+      manager.date_of_birth.toLowerCase().includes(searchString) ||
+      manager.phone.toLowerCase().includes(searchString) ||
+      manager.gender.toLowerCase().includes(searchString) ||
+      manager.warehouse_id.toLowerCase().includes(searchString)
+    );
+  });
 
   return (
     <div className='longfix1'>
@@ -90,7 +108,7 @@ const ManagerList = () => {
           </Button>
           <Form.Control className='longfixbutton3'
             type="text"
-            placeholder="Search by name"
+            placeholder="Search"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{ width: '300px' }}
@@ -123,7 +141,8 @@ const ManagerList = () => {
               <td>{manager.gender}</td>
               <td>{manager.warehouse_id}</td>
               <td>
-                <Button variant="warning" onClick={() => handleEditManager(index)}>Edit</Button>
+                <Button variant="info" onClick={() => handleViewManager(index)}>View</Button>{' '}
+                <Button variant="warning" onClick={() => handleEditManager(index)}>Edit</Button>{' '}
                 <Button variant="danger" onClick={() => handleDeleteManager(index)}>Delete</Button>
               </td>
             </tr>
@@ -197,10 +216,10 @@ const ManagerList = () => {
           <Form.Group controlId="formBasicWarehouseID">
             <Form.Label>Warehouse ID</Form.Label>
             <Form.Control
-              type="number"
+              type="text"
               placeholder="Enter warehouse ID"
               value={newManager.warehouse_id}
-              onChange={(e) => setNewManager({ ...newManager, warehouse_id: parseInt(e.target.value) })}
+              onChange={(e) => setNewManager({ ...newManager, warehouse_id: e.target.value })}
             />
           </Form.Group>
         </Modal.Body>
@@ -213,6 +232,28 @@ const ManagerList = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+
+      {viewManager && (
+        <Modal show={showViewModal} onHide={handleCloseViewModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>View Manager</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p><strong>Name:</strong> {viewManager.name}</p>
+            <p><strong>Email:</strong> {viewManager.email}</p>
+            <p><strong>Role:</strong> {viewManager.role}</p>
+            <p><strong>Date of Birth:</strong> {viewManager.date_of_birth}</p>
+            <p><strong>Phone:</strong> {viewManager.phone}</p>
+            <p><strong>Gender:</strong> {viewManager.gender}</p>
+            <p><strong>Warehouse ID:</strong> {viewManager.warehouse_id}</p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseViewModal}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      )}
     </div>
   );
 };
