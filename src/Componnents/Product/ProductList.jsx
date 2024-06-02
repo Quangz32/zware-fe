@@ -111,44 +111,51 @@ const ProductList = () => {
           />
         </div>
       </div>
-      <Table className="table text-center">
-        <thead>
-          <tr>
-            <th>No.</th>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Category ID</th>
-            <th>Supplier</th>
-            <th>Measure Unit</th>
-            <th>Image</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredProducts.map((product, index) => (
-            <tr key={index}>
-              <td>{index + 1}</td>
-              <td>{product.id}</td>
-              <td>{product.name}</td>
-              <td>{product.category_id}</td>
-              <td>{product.supplier}</td>
-              <td>{product.measure_unit}</td>
-              <td><img src={product.image} alt={product.name} style={{ width: '50px' }} /></td>
-              <td>
-                <div className="">
-                  <div className='row w-60'>
-                    <div className="d-flex justify-content-between align-items-center">
-                      <Button variant="info" onClick={() => handleShowViewModal(product)}>View</Button>
-                      <Button variant="warning" onClick={() => handleEditProduct(index)}>Edit</Button>{' '}
-                      <Button variant="danger" onClick={() => handleDeleteProduct(index)}>Delete</Button>{' '}
-                    </div>
-                  </div>
-                </div>
-              </td>
+      {filteredProducts.length > 0 ? (
+        <Table className="table text-center">
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Category ID</th>
+              <th>Supplier</th>
+              <th>Measure Unit</th>
+              <th>Image</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {filteredProducts.map((product, index) => (
+              <tr key={index}>
+                <td>{index + 1}</td>
+                <td>{product.id}</td>
+                <td>{product.name}</td>
+                <td>{product.category_id}</td>
+                <td>{product.supplier}</td>
+                <td>{product.measure_unit}</td>
+                <td><img src={product.image} alt={product.name} style={{ width: '50px' }} /></td>
+                <td>
+                <div className='row w-60'>
+        <div className="d-flex justify-content-between align-items-center mb-3">
+                <Button variant="info" onClick={() => handleShowViewModal(product)}>View</Button>
+                  <Button variant="warning" className="me-2" onClick={() => handleEditProduct(index)}>Edit</Button>
+                  <Button variant="danger" className="me-2" onClick={() => handleDeleteProduct(index)}>Delete</Button>
+               </div>
+               </div>
+              
+
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      ) : (
+        // <div className="text-center mt-3">
+          // <Alert variant="info">No products found.</Alert>
+        // </div>
+        <p style={{color: 'white'}}>No products found.</p>
+      )}
 
       <Modal show={showAddModal} onHide={handleCloseAddModal}>
         <Modal.Header closeButton>
@@ -203,13 +210,16 @@ const ProductList = () => {
               />
             </Form.Group>
             <Modal.Footer>
-              <Button variant="secondary" onClick={handleCloseAddModal}>
+            <div className="d-flex justify-content-start w-60">
+              <Button variant="secondary mt-2 " onClick={handleCloseAddModal}>
                 Close
               </Button>
-              <Button variant="primary" type="submit">
-                {editIndex !== null ? 'Save Changes' : 'Add Product'}
+              <Button variant="btn btn-primary mt-2" type="submit">
+                {editIndex !== null ? 'Save Changes' : 'Add'}
               </Button>
+              </div>
             </Modal.Footer>
+
           </Form>
         </Modal.Body>
       </Modal>
