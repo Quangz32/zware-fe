@@ -9,6 +9,7 @@ import ProductList from "./Pages/Product";
 import Outbound from "./Pages/Outbound";
 import TestAxios from "./Pages/TestAxios";
 import Inbound from "./Pages/Inbound";
+import WarehouseManager from "./Pages/Warehouse";
 
 function App() {
   return (
@@ -18,10 +19,9 @@ function App() {
         <Route path="/" element={<App />}></Route>
         <Route path="/login" element={ <Login />}></Route>
         <Route path="/home" element={<Home />}></Route>
-        
-        {/* <Route path="/dashboard" element={<Sidebar />}></Route> */}
         <Route path="/profile" element={<Profile />}></Route>
         <Route path="/users" element={<UserManage />}></Route>
+        <Route path="/warehouse" element={<WarehouseManager />}></Route>
         <Route path="/outbound" element={<Outbound />}></Route>
         <Route path="/inbound" element={<Inbound />}></Route>
         <Route path="/products" element={<ProductList />}></Route>
