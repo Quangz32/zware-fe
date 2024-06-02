@@ -45,7 +45,7 @@ const Home = () => {
     }, []);
 
     return (
-        <div className="container my-5">
+        <div className="longfix1 my-5">
             <div className="row text-center mb-4">
                 <div className="col-md-4">
                     <div className="card p-3 shadow-sm">

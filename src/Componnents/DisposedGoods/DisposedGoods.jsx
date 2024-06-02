@@ -83,7 +83,7 @@ const DisposedGoods = () => {
   );
 
   return (
-    <div className='container w-60'>
+    <div className='longfix1 w-60'>
       <h1>Disposed Goods</h1>
       <div className='row '>
         <div className="d-flex justify-content-between mb-2">
@@ -137,7 +137,7 @@ const DisposedGoods = () => {
           </tbody>
         </Table>
       ) : (
-        <p>No disposed goods found.</p>
+        <p style={{color: 'white'}}>No disposed goods found.</p>
       )}
       <Modal show={showAddModal} onHide={handleCloseAddModal}>
         <Modal.Header closeButton>

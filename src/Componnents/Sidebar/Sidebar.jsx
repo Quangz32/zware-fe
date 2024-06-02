@@ -60,9 +60,9 @@ const Sidebar = () => {
                     </Link>
                 </li>
                 <li className="sidebar-item">
-                    <Link to="/report" className="sidebar-link">
+                    <Link to="/disposedgoods" className="sidebar-link">
                         <i className="bi bi-clipboard2-data"></i>
-                        <span>Report</span>
+                        <span>Disposed goods</span>
                     </Link>
                 </li>
                 <li className="sidebar-item">

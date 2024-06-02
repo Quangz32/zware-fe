@@ -77,7 +77,7 @@ const Profile = () => {
     <div className="container centered-container">
       <div className="w-100">
         <div className="">
-          <div className="container rounded bg-white p-4">
+        <div className="container rounded bg-white p-4" style={{ marginTop: "65px" }}>
             <div className="row">
               <div className="col-md-3 border-right d-flex flex-column align-items-center text-center p-3 py-5">
                 <img
