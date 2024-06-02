@@ -79,11 +79,11 @@ const WarehouseManager = () => {
   );
 
   return (
-    <div className='container'>
+    <div className='longfix1'>
       <h1>Warehouse Management</h1>
       <div className='row w-100'>
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <Button className="button-add" variant="primary" onClick={handleShowAddModal}>
+        <div className="d-flex justify-content-between align-items-center mb-3  ">
+          <Button className="button-add longbuttonfix2" style={{ marginLeft: '140px' }} variant="primary" onClick={handleShowAddModal}>
             Add Warehouse
           </Button>
           <Form.Control
@@ -91,7 +91,8 @@ const WarehouseManager = () => {
             placeholder="Search"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
+            className="search-input " 
+            style={{ marginRight: '114px' }}
           />
         </div>
       </div>

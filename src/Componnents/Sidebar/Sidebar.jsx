@@ -48,6 +48,12 @@ const Sidebar = () => {
                     </Link>
                 </li>
                 <li className="sidebar-item">
+                    <Link to="/warehouse" className="sidebar-link">
+                        <i className="bi bi-house-gear"></i>
+                        <span>Warehouse</span>
+                    </Link>
+                </li>
+                <li className="sidebar-item">
                     <Link to="/products" className="sidebar-link">
                         <i className="bi bi-boxes"></i>
                         <span>Product</span>
