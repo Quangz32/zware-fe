@@ -1,0 +1,21 @@
+.container {
+    margin-top: 20px;
+  }
+  
+  .button-add {
+    margin-right: 10px;
+  }
+  
+  .table th, .table td {
+    vertical-align: middle;
+  }
+  
+  .modal-body {
+    padding: 20px;
+  }
+  
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+  }
+  

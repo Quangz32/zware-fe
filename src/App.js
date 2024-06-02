@@ -10,6 +10,7 @@ import Outbound from "./Pages/Outbound";
 import TestAxios from "./Pages/TestAxios";
 import Inbound from "./Pages/Inbound";
 import WarehouseManager from "./Pages/Warehouse";
+import DisposedGoods from "./Pages/DisposedGoods";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/outbound" element={<Outbound />}></Route>
         <Route path="/inbound" element={<Inbound />}></Route>
         <Route path="/products" element={<ProductList />}></Route>
+        <Route path="/disposedgoods" element={<DisposedGoods />}></Route>
         <Route path="/axios" element={<TestAxios />}></Route>
       </Routes>
     </BrowserRouter>
