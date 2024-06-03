@@ -31,14 +31,14 @@ h1 {
 #sidebar {
   width: 70px;
   min-width: 70px;
-  height: 100vh; /* Full height */
-  position: fixed; /* Fixed position */
+  height: 100vh;
+  position: fixed;
   z-index: 1000;
   transition: all 0.25s ease-in-out;
   background-color: #0e2238;
   display: flex;
   flex-direction: column;
-  border: none; /* Ensure no border is applied */
+  border: none;
 }
 
 #sidebar.expand {
@@ -75,7 +75,7 @@ h1 {
 }
 
 .sidebar-nav {
-  padding: 0.5rem 0;
+  padding: 0.25rem 0;
   flex: 1 1 auto;
 }
 
@@ -102,6 +102,14 @@ a.sidebar-link:hover {
   position: relative;
 }
 
+.has-dropdown .sidebar-dropdown {
+  display: none;
+}
+
+.has-dropdown:hover .sidebar-dropdown {
+  display: block;
+}
+
 #sidebar:not(.expand) .sidebar-item .sidebar-dropdown {
   position: absolute;
   top: 0;
@@ -109,14 +117,14 @@ a.sidebar-link:hover {
   background-color: #0e2238;
   padding: 0;
   min-width: 15rem;
-  display: none;
 }
 
-#sidebar:not(.expand) .sidebar-item:hover .has-dropdown + .sidebar-dropdown {
+#sidebar:not(.expand) .sidebar-item.has-dropdown:hover .sidebar-dropdown {
   display: block;
-  max-height: 15em;
-  width: 100%;
-  opacity: 1;
+  max-height: 200px;
+  overflow: hidden;
+  padding: 0.5rem 0;
+  border-left: 3px solid #3b7ddd;
 }
 
 #sidebar.expand .sidebar-link[data-bs-toggle="collapse"]::after {
@@ -153,7 +161,7 @@ a.sidebar-link:hover {
 
 .profile {
   text-align: center;
-  margin: 30px 0 0;
+  margin: 10px 0 0;
 }
 
 .profile img {
@@ -183,4 +191,13 @@ a.sidebar-link:hover {
   background-color: #495057;
   font-size: 14px;
   margin: 0 auto;
+}
+
+.sidebar-dropdown {
+  padding-left: 1.625rem;
+}
+
+.sidebar-dropdown a {
+  padding: 0.5rem 0;
+  display: block;
 }

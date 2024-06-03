@@ -59,17 +59,28 @@ const Sidebar = () => {
                         <span>Product</span>
                     </Link>
                 </li>
-                <li className="sidebar-item">
-                    <Link to="/disposedgoods" className="sidebar-link">
-                        <i className="bi bi-clipboard2-data"></i>
-                        <span>Disposed goods</span>
-                    </Link>
-                </li>
-                <li className="sidebar-item">
-                    <Link to="/outbound" className="sidebar-link">
+                <li className="sidebar-item has-dropdown">
+                    <Link to="#" className="sidebar-link" >
                         <i className="bi bi-arrow-left-right"></i>
                         <span>Transaction</span>
                     </Link>
+                    <ul className="sidebar-dropdown ">
+                        <li className="sidebar-item">
+                            <Link to="/inbound" className="sidebar-link">
+                                <span>Inbound</span>
+                            </Link>
+                        </li>
+                        <li className="sidebar-item">
+                            <Link to="/outbound" className="sidebar-link">
+                                <span>Outbound</span>
+                            </Link>
+                        </li>
+                        <li className="sidebar-item">
+                            <Link to="/disposedgoods" className="sidebar-link">
+                                <span>Disposed goods</span>
+                            </Link>
+                        </li>
+                    </ul>
                 </li>
             </ul>
             <div className="sidebar-footer">
