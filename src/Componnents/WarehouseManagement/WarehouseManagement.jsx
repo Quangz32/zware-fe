@@ -5,12 +5,14 @@ import './WarehouseManagement.css';
 
 const WarehouseManager = () => {
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
   const [warehouses, setWarehouses] = useState([]);
   const [newWarehouse, setNewWarehouse] = useState({
     id: '',
     name: '',
     address: '',
   });
+  const [selectedWarehouse, setSelectedWarehouse] = useState({});
   const [editIndex, setEditIndex] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [error, setError] = useState('');
@@ -25,6 +27,8 @@ const WarehouseManager = () => {
     setShowAddModal(true);
     setError('');
   };
+
+  const handleCloseViewModal = () => setShowViewModal(false);
 
   const validateWarehouse = (warehouse) => {
     if (!warehouse.name || !warehouse.address) {
@@ -72,6 +76,12 @@ const WarehouseManager = () => {
     handleShowAddModal();
   };
 
+  const handleViewWarehouse = (index) => {
+    const warehouseToView = warehouses[index];
+    setSelectedWarehouse(warehouseToView);
+    setShowViewModal(true);
+  };
+
   const filteredWarehouses = warehouses.filter((warehouse) =>
     Object.values(warehouse).some(value =>
       value.toString().toLowerCase().includes(searchTerm.toLowerCase())
@@ -81,8 +91,8 @@ const WarehouseManager = () => {
   return (
     <div className='longfix1'>
       <h1>Warehouse Management</h1>
-      <div className='row w-100'>
-        <div className="d-flex justify-content-between align-items-center mb-3  ">
+      <div className='row w-60'>
+        <div className="d-flex justify-content-between align-items-center mb-3">
           <Button className="button-add longbuttonfix2" style={{ marginLeft: '140px' }} variant="primary" onClick={handleShowAddModal}>
             Add Warehouse
           </Button>
@@ -91,36 +101,47 @@ const WarehouseManager = () => {
             placeholder="Search"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input " 
+            className="search-input"
             style={{ marginRight: '114px' }}
           />
         </div>
       </div>
-      <table className="table text-center">
-        <thead>
-          <tr>
-            <th>No.</th>  {/* Moved "No." column to the beginning */}
-            <th>ID</th>
-            <th>Name</th>
-            <th>Address</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredWarehouses.map((warehouse, index) => (
-            <tr key={warehouse.id}>
-              <td>{index + 1}</td>  {/* Updated to show index number */}
-              <td>{warehouse.id}</td>
-              <td>{warehouse.name}</td>
-              <td>{warehouse.address}</td>
-              <td>
-                <Button variant="warning" onClick={() => handleEditWarehouse(index)}>Edit</Button>
-                <Button variant="danger" onClick={() => handleDeleteWarehouse(index)}>Delete</Button>
-              </td>
+      {filteredWarehouses.length > 0 ? (
+        <table className="table text-center">
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Address</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredWarehouses.map((warehouse, index) => (
+              <tr key={warehouse.id}>
+                <td>{index + 1}</td>
+                <td>{warehouse.id}</td>
+                <td>{warehouse.name}</td>
+                <td>{warehouse.address}</td>
+                <td>
+                <div className='row w-60'>
+        <div className="d-flex justify-content-between align-items-center mb-3">
+                  <Button variant="info" onClick={() => handleViewWarehouse(index)}>View</Button>
+                  <Button variant="warning" onClick={() => handleEditWarehouse(index)}>Edit</Button>
+                  <Button variant="danger" onClick={() => handleDeleteWarehouse(index)}>Delete</Button>
+                  </div>
+               </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+   
+        <p style={{color: 'white'}}>No warehouse found.</p>
+     
+     )}
 
       <Modal show={showAddModal} onHide={handleCloseAddModal}>
         <Modal.Header closeButton>
@@ -148,11 +169,29 @@ const WarehouseManager = () => {
           </Form.Group>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseAddModal}>
+        <div className="d-flex justify-content-start w-60">
+          <Button variant="secondary  mt-2 " onClick={handleCloseAddModal}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleAddWarehouse}>
+          <Button variant="btn btn-primary primary  mt-2 " onClick={handleAddWarehouse}>
             {editIndex !== null ? 'Save Changes' : 'Add'}
+          </Button>
+          </div>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showViewModal} onHide={handleCloseViewModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>View Warehouse</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p><strong>ID:</strong> {selectedWarehouse.id}</p>
+          <p><strong>Name:</strong> {selectedWarehouse.name}</p>
+          <p><strong>Address:</strong> {selectedWarehouse.address}</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseViewModal}>
+            Close
           </Button>
         </Modal.Footer>
       </Modal>
