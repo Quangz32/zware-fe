@@ -1,18 +1,43 @@
-import React, { useState } from 'react';
+/* eslint-disable no-restricted-globals */
+
+import React, { useState, useEffect } from 'react';
 import { Button, Modal, Form, Alert } from 'react-bootstrap';
 // import './WarehouseManager.css';  // Import the CSS file
 import './WarehouseManagement.css';
+import MyAxios from '../../Utils/MyAxios'
+
+
 
 const WarehouseManager = () => {
+  const [warehouses, setWarehouses] = useState([]);
+  //fetch Warehouse list (From BE)
+  const fetchData = async () => {
+    try {
+      const response = await MyAxios.get('warehouses');
+      console.log(response.data);
+      setWarehouses(response.data);
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+
+
   const [showAddModal, setShowAddModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
-  const [warehouses, setWarehouses] = useState([]);
+
   const [newWarehouse, setNewWarehouse] = useState({
-    id: '',
+    // id: '',
     name: '',
     address: '',
   });
   const [selectedWarehouse, setSelectedWarehouse] = useState({});
+
   const [editIndex, setEditIndex] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [error, setError] = useState('');
@@ -37,36 +62,38 @@ const WarehouseManager = () => {
     return '';
   };
 
-  const generateId = () => {
-    return Math.random().toString(36).substr(2, 9);
-  };
-
-  const handleAddWarehouse = () => {
+  const handleAddWarehouse = async () => {
     const validationError = validateWarehouse(newWarehouse);
     if (validationError) {
       setError(validationError);
       return;
     }
     if (editIndex !== null) {
-      const updatedWarehouses = [...warehouses];
-      updatedWarehouses[editIndex] = newWarehouse;
-      setWarehouses(updatedWarehouses);
+      const warehouseToEdit = warehouses[editIndex];
+      console.log(newWarehouse);
+      await MyAxios.put(`warehouses/${warehouseToEdit.id}`, {
+        name: newWarehouse.name,
+        address: newWarehouse.address
+      });
     } else {
-      const warehouseWithId = { ...newWarehouse, id: generateId() };
-      setWarehouses([...warehouses, warehouseWithId]);
+      await MyAxios.post(`warehouses`, newWarehouse);
     }
     setNewWarehouse({
-      id: '',
       name: '',
       address: '',
     });
+    fetchData();
     handleCloseAddModal();
   };
 
-  const handleDeleteWarehouse = (index) => {
-    const updatedWarehouses = [...warehouses];
-    updatedWarehouses.splice(index, 1);
-    setWarehouses(updatedWarehouses);
+  const handleDeleteWarehouse = async (index) => {
+    if (!confirm("Are you sure to delete this warehouse?")) {
+      return;
+    };
+
+    await MyAxios.delete(`warehouses/${warehouses[index].id}`);
+    fetchData();
+
   };
 
   const handleEditWarehouse = (index) => {
@@ -125,23 +152,23 @@ const WarehouseManager = () => {
                 <td>{warehouse.name}</td>
                 <td>{warehouse.address}</td>
                 <td>
-                <div className='row w-60'>
-        <div className="d-flex justify-content-between align-items-center mb-3">
-                  <Button variant="info" onClick={() => handleViewWarehouse(index)}>View</Button>
-                  <Button variant="warning" onClick={() => handleEditWarehouse(index)}>Edit</Button>
-                  <Button variant="danger" onClick={() => handleDeleteWarehouse(index)}>Delete</Button>
+                  <div className='row w-60'>
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                      <Button variant="info" onClick={() => handleViewWarehouse(index)}>View</Button>
+                      <Button variant="warning" onClick={() => handleEditWarehouse(index)}>Edit</Button>
+                      <Button variant="danger" onClick={() => handleDeleteWarehouse(index)}>Delete</Button>
+                    </div>
                   </div>
-               </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       ) : (
-   
-        <p style={{color: 'white'}}>No warehouse found.</p>
-     
-     )}
+
+        <p style={{ color: 'white' }}>No warehouse found.</p>
+
+      )}
 
       <Modal show={showAddModal} onHide={handleCloseAddModal}>
         <Modal.Header closeButton>
@@ -169,13 +196,13 @@ const WarehouseManager = () => {
           </Form.Group>
         </Modal.Body>
         <Modal.Footer>
-        <div className="d-flex justify-content-start w-60">
-          <Button variant="secondary  mt-2 " onClick={handleCloseAddModal}>
-            Close
-          </Button>
-          <Button variant="btn btn-primary primary  mt-2 " onClick={handleAddWarehouse}>
-            {editIndex !== null ? 'Save Changes' : 'Add'}
-          </Button>
+          <div className="d-flex justify-content-start w-60">
+            <Button variant="secondary  mt-2 " onClick={handleCloseAddModal}>
+              Close
+            </Button>
+            <Button variant="btn btn-primary primary  mt-2 " onClick={handleAddWarehouse}>
+              {editIndex !== null ? 'Save Changes' : 'Add'}
+            </Button>
           </div>
         </Modal.Footer>
       </Modal>
