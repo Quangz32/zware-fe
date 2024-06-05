@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from "../../../Utils/MyAxios"; // Import the custom Axios instance
 import { Table, Button, Modal, Form, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import './Outbound.css';
@@ -22,7 +22,7 @@ const Outbound = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('/api/outbound-transactions')
+    axios.get('/outbound_transactions')
       .then(response => {
         setTransactions(response.data);
       })
@@ -33,10 +33,11 @@ const Outbound = () => {
 
   const handleViewDetails = (transaction) => {
     setSelectedTransaction(transaction);
-    axios.get(`/api/outbound-transactions/${transaction.id}/details`)
+    axios.get(`/outbound_transaction_details/${transaction.id}`)
       .then(response => {
-        setDetails(response.data);
-        const initialValues = response.data.reduce((acc, detail) => {
+        const data = Array.isArray(response.data) ? response.data : [];
+        setDetails(data);
+        const initialValues = data.reduce((acc, detail) => {
           acc[detail.item_id] = {
             item_id: detail.item_id,
             quantity: detail.quantity || '',
@@ -48,6 +49,7 @@ const Outbound = () => {
       })
       .catch(error => {
         console.error('There was an error fetching the transaction details!', error);
+        setDetails([]); // Ensure details is always an array
       });
   };
 
@@ -99,12 +101,14 @@ const Outbound = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newTransactionWithId = {
-      ...newTransaction,
-      id: transactions.length + 1,
-    };
-    setTransactions([...transactions, newTransactionWithId]);
-    handleFormModalClose();
+    axios.post('/outbound_transactions', newTransaction)
+      .then(response => {
+        setTransactions([...transactions, response.data]);
+        handleFormModalClose();
+      })
+      .catch(error => {
+        console.error('There was an error creating the transaction!', error);
+      });
   };
 
   const handleSaveDetails = () => {
@@ -119,11 +123,15 @@ const Outbound = () => {
       quantity: row.quantity,
       zone: row.zone,
     }));
-    setDetails([...updatedDetails, ...newDetailRows]);
-    setSelectedTransaction(null);
-    setDetails([]);
-    setQuantityMap({});
-    setNewRows([]);
+
+    axios.put(`/outbound_transaction_details/${selectedTransaction.id}`, [...updatedDetails, ...newDetailRows])
+      .then(response => {
+        setDetails([...updatedDetails, ...newDetailRows]);
+        handleCloseModal();
+      })
+      .catch(error => {
+        console.error('There was an error saving the transaction details!', error);
+      });
   };
 
   const handleDeleteRow = (itemId) => {
@@ -151,7 +159,6 @@ const Outbound = () => {
             <th>Transaction ID</th>
             <th>Date</th>
             <th>Maker ID</th>
-            <th>Maker Name</th>
             <th>Status</th>
             <th>Destination Warehouse</th>
             <th>Details</th>
@@ -163,7 +170,6 @@ const Outbound = () => {
               <td>{transaction.id}</td>
               <td>{transaction.date}</td>
               <td>{transaction.maker_id}</td>
-              <td>{transaction.maker_name}</td>
               <td>{transaction.status}</td>
               <td>{transaction.destination}</td>
               <td>
@@ -188,12 +194,12 @@ const Outbound = () => {
               </tr>
             </thead>
             <tbody>
-              {details.map((detail, index) => (
+              {details.map((detail) => (
                 <tr key={detail.item_id}>
                   <td>
                     <Form.Control 
                       type="text" 
-                      value={quantityMap[detail.item_id].item_id} 
+                      value={quantityMap[detail.item_id]?.item_id || ''} 
                       onChange={(e) => handleQuantityChange(e, detail.item_id, 'item_id')} 
                       required 
                     />
@@ -201,7 +207,7 @@ const Outbound = () => {
                   <td>
                     <Form.Control 
                       type="number" 
-                      value={quantityMap[detail.item_id].quantity} 
+                      value={quantityMap[detail.item_id]?.quantity || ''} 
                       onChange={(e) => handleQuantityChange(e, detail.item_id, 'quantity')} 
                       required 
                     />
@@ -209,7 +215,7 @@ const Outbound = () => {
                   <td>
                     <Form.Control 
                       type="text" 
-                      value={quantityMap[detail.item_id].zone} 
+                      value={quantityMap[detail.item_id]?.zone || ''} 
                       onChange={(e) => handleQuantityChange(e, detail.item_id, 'zone')} 
                       required 
                     />

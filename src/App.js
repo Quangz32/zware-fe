@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {useLocation, BrowserRouter, Routes, Route } from "react-router-dom";
 import Profile from "./Componnents/Profile/Profile";
 import Login from "./Componnents/LoginForm/LoginForm";
 import Home from "./Componnents/Home/Home";
@@ -13,27 +13,33 @@ import WarehouseManager from "./Componnents/WarehouseManagement/WarehouseManagem
 import DisposedGoods from "./Componnents/DisposedGoods/DisposedGoods";
 import Sidebar from "./Componnents/Sidebar/Sidebar";
 
+function AppContent() {
+  const location = useLocation();
+  const isLoginPage = location.pathname === '/login';
+
+  return (
+    <div>
+      {!isLoginPage && <Sidebar />}
+      <Routes>
+        <Route path="/home" element={<Home />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/users" element={<UserManage />} />
+        <Route path="/warehouse" element={<WarehouseManager />} />
+        <Route path="/outbound" element={<Outbound />} />
+        <Route path="/inbound" element={<Inbound />} />
+        <Route path="/products" element={<ProductList />} />
+        <Route path="/disposedgoods" element={<DisposedGoods />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/axios" element={<TestAxios />} />
+      </Routes>
+    </div>
+  );
+}
+
 function App() {
   return (
-    
     <BrowserRouter>
-    <div className="">
-    <Sidebar />
-      <Routes>
-        
-        <Route path="/" element={<App />}></Route>
-        
-        <Route path="/home" element={<Home/>}></Route>
-        <Route path="/profile" element={<Profile />}></Route>
-        <Route path="/users" element={<UserManage />}></Route>
-        <Route path="/warehouse" element={<WarehouseManager />}></Route>
-        <Route path="/outbound" element={<Outbound />}></Route>
-        <Route path="/inbound" element={<Inbound />}></Route>
-        <Route path="/products" element={<ProductList />}></Route>
-        <Route path="/disposedgoods" element={<DisposedGoods />}></Route>
-        <Route path="/axios" element={<TestAxios />}></Route>
-      </Routes>
-      </div>
+      <AppContent />
     </BrowserRouter>
   );
 }
