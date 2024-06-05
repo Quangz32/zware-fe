@@ -44,11 +44,12 @@ const LoginForm = () => {
 
         try {
             const jwt = await authenticateUser(email, password);
-            if (jwt) {
+            if (jwt === "Invalid credentials") {
+                setError("Invalid email or password")
+
+            } else {
                 localStorage.setItem("jwt-token", jwt);
                 navigate("/home");
-            } else {
-                setError("Invalid email or password")
             }
         } catch (err) {
             setError(err.message);
