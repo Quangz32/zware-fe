@@ -1,4 +1,4 @@
-import {useLocation, BrowserRouter, Routes, Route } from "react-router-dom";
+import {useLocation,  Routes, Route, useLocation, BrowserRouter } from "react-router-dom";
 import Profile from "./Componnents/Profile/Profile";
 import Login from "./Componnents/LoginForm/LoginForm";
 import Home from "./Componnents/Home/Home";
@@ -12,6 +12,7 @@ import Inbound from "./Componnents/Transaction/Inbound/Inbound";
 import WarehouseManager from "./Componnents/WarehouseManagement/WarehouseManagement"; 
 import DisposedGoods from "./Componnents/DisposedGoods/DisposedGoods";
 import Sidebar from "./Componnents/Sidebar/Sidebar";
+
 
 function AppContent() {
   const location = useLocation();
