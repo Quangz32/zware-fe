@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Modal, Form, Table, Alert } from 'react-bootstrap';
+import axios from '../../Utils/MyAxios';
 import './DisposedGoods.css';
 
 const DisposedGoods = () => {
@@ -11,11 +12,32 @@ const DisposedGoods = () => {
     item_id: '',
     quantity: '',
     reason: '',
+    warehouse_id: '',
+    date: '',
+    status: '',
   });
   const [viewDisposedGood, setViewDisposedGood] = useState(null);
   const [editIndex, setEditIndex] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showError, setShowError] = useState(false);
+  const [additionalDetails, setAdditionalDetails] = useState({
+    warehouse_id: '',
+    date: '',
+    status: ''
+  });
+
+  useEffect(() => {
+    const fetchDisposedGoods = async () => {
+      try {
+        const response = await axios.get('/disposedgood');
+        setDisposedGoods(response.data);
+      } catch (error) {
+        console.error('Error fetching disposed goods:', error);
+      }
+    };
+
+    fetchDisposedGoods();
+  }, []);
 
   const handleCloseAddModal = () => {
     setShowAddModal(false);
@@ -36,44 +58,81 @@ const DisposedGoods = () => {
       item_id: '',
       quantity: '',
       reason: '',
+      warehouse_id: '',
+      date: '',
+      status: '',
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const { disposal_id, item_id, quantity, reason } = newDisposedGood;
+    const { disposal_id, item_id, quantity, reason, warehouse_id, date, status } = newDisposedGood;
 
-    if (!disposal_id || !item_id || !quantity || !reason) {
+    if (!disposal_id || !item_id || !quantity || !reason || !warehouse_id || !date || !status) {
       setShowError(true);
       return;
     }
 
-    if (editIndex !== null) {
-      const updatedDisposedGoods = [...disposedGoods];
-      updatedDisposedGoods[editIndex] = newDisposedGood;
-      setDisposedGoods(updatedDisposedGoods);
-      setEditIndex(null);
-    } else {
-      setDisposedGoods([...disposedGoods, newDisposedGood]);
+    try {
+      if (editIndex !== null) {
+        const updatedDisposedGood = await axios.put(`/disposedgood/${disposedGoods[editIndex].id}`, newDisposedGood);
+        const updatedDisposedGoods = [...disposedGoods];
+        updatedDisposedGoods[editIndex] = updatedDisposedGood.data;
+        setDisposedGoods(updatedDisposedGoods);
+        setEditIndex(null);
+      } else {
+        const response = await axios.post('/disposedgood', newDisposedGood);
+        setDisposedGoods([...disposedGoods, response.data]);
+      }
+    } catch (error) {
+      console.error('Error submitting disposed good:', error);
     }
 
     handleCloseAddModal();
   };
 
-  const handleEditDisposedGood = (index) => {
-    setNewDisposedGood(disposedGoods[index]);
+  const handleEditDisposedGood = async (index) => {
+    const good = disposedGoods[index];
+    setNewDisposedGood(good);
     setEditIndex(index);
+    
+    try {
+      const response = await axios.get(`/goodsdisposal/${good.id}`);
+      setAdditionalDetails(response.data);
+      setNewDisposedGood({
+        ...good,
+        warehouse_id: response.data.warehouse_id,
+        date: new Date(response.data.date).toISOString().substr(0, 10),
+        status: response.data.status
+      });
+    } catch (error) {
+      console.error('Error fetching additional details:', error);
+    }
+    
     handleShowAddModal();
   };
 
-  const handleDeleteDisposedGood = (index) => {
-    const updatedDisposedGoods = disposedGoods.filter((_, i) => i !== index);
-    setDisposedGoods(updatedDisposedGoods);
+  const handleDeleteDisposedGood = async (index) => {
+    try {
+      await axios.delete(`/disposedgood/${disposedGoods[index].id}`);
+      const updatedDisposedGoods = disposedGoods.filter((_, i) => i !== index);
+      setDisposedGoods(updatedDisposedGoods);
+    } catch (error) {
+      console.error('Error deleting disposed good:', error);
+    }
   };
 
-  const handleViewDisposedGood = (index) => {
-    setViewDisposedGood(disposedGoods[index]);
+  const handleViewDisposedGood = async (index) => {
+    const good = disposedGoods[index];
+    setViewDisposedGood(good);
     setShowViewModal(true);
+
+    try {
+      const response = await axios.get(`/goodsdisposal/${good.id}`);
+      setAdditionalDetails(response.data);
+    } catch (error) {
+      console.error('Error fetching additional details:', error);
+    }
   };
 
   const filteredDisposedGoods = disposedGoods.filter((good) =>
@@ -105,13 +164,10 @@ const DisposedGoods = () => {
             <tr>
               <th>No.</th>
               <th>ID</th>
-              <th>Warehouse ID</th>
               <th>Disposal ID</th>
               <th>Item ID</th>
               <th>Quantity</th>
-              <th>Date</th>
               <th>Reason</th>
-              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -120,13 +176,10 @@ const DisposedGoods = () => {
               <tr key={index}>
                 <td>{index + 1}</td>
                 <td>{good.id}</td>
-                <td>{good.warehouse_id}</td>
                 <td>{good.disposal_id}</td>
                 <td>{good.item_id}</td>
                 <td>{good.quantity}</td>
-                <td>{good.date}</td>
                 <td>{good.reason}</td>
-                <td>{good.status}</td>
                 <td>
                   <Button variant="info" onClick={() => handleViewDisposedGood(index)}>View</Button>{' '}
                   <Button variant="warning" onClick={() => handleEditDisposedGood(index)}>Edit</Button>{' '}
@@ -182,6 +235,33 @@ const DisposedGoods = () => {
                 onChange={(e) => setNewDisposedGood({ ...newDisposedGood, reason: e.target.value })}
               />
             </Form.Group>
+            <Form.Group controlId="formDisposedGoodWarehouseID">
+              <Form.Label>Warehouse ID</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter warehouse ID"
+                value={newDisposedGood.warehouse_id}
+                onChange={(e) => setNewDisposedGood({ ...newDisposedGood, warehouse_id: e.target.value })}
+              />
+            </Form.Group>
+            <Form.Group controlId="formDisposedGoodDate">
+              <Form.Label>Date</Form.Label>
+              <Form.Control
+                type="date"
+                placeholder="Enter date"
+                value={newDisposedGood.date}
+                onChange={(e) => setNewDisposedGood({ ...newDisposedGood, date: e.target.value })}
+              />
+            </Form.Group>
+            <Form.Group controlId="formDisposedGoodStatus">
+              <Form.Label>Status</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter status"
+                value={newDisposedGood.status}
+                onChange={(e) => setNewDisposedGood({ ...newDisposedGood, status: e.target.value })}
+              />
+            </Form.Group>
             <Modal.Footer>
               <Button variant="secondary" onClick={handleCloseAddModal}>
                 Close
@@ -202,13 +282,13 @@ const DisposedGoods = () => {
           {viewDisposedGood && (
             <div>
               <p><strong>ID:</strong> {viewDisposedGood.id}</p>
-              <p><strong>Warehouse ID:</strong> {viewDisposedGood.warehouse_id}</p>
+              <p><strong>Warehouse ID:</strong> {additionalDetails.warehouse_id}</p>
               <p><strong>Disposal ID:</strong> {viewDisposedGood.disposal_id}</p>
               <p><strong>Item ID:</strong> {viewDisposedGood.item_id}</p>
               <p><strong>Quantity:</strong> {viewDisposedGood.quantity}</p>
-              <p><strong>Date:</strong> {viewDisposedGood.date}</p>
+              <p><strong>Date:</strong> {additionalDetails.date}</p>
               <p><strong>Reason:</strong> {viewDisposedGood.reason}</p>
-              <p><strong>Status:</strong> {viewDisposedGood.status}</p>
+              <p><strong>Status:</strong> {additionalDetails.status}</p>
             </div>
           )}
         </Modal.Body>
