@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from "../../../Utils/MyAxios"; // Import the custom Axios instance
 import { Table, Button, Modal, Form, Row, Col } from 'react-bootstrap';
-import './Inbound.css';
 import { useNavigate } from 'react-router-dom';
+import './Inbound.css';
 
 const Inbound = () => {
   const [transactions, setTransactions] = useState([]);
@@ -16,12 +16,13 @@ const Inbound = () => {
     status: '',
     destination: '',
   });
-  const navigate = useNavigate();
   const [quantityMap, setQuantityMap] = useState({});
   const [newRows, setNewRows] = useState([]);
 
+  const navigate = useNavigate();
+
   useEffect(() => {
-    axios.get('/api/inbound-transactions')
+    axios.get('/inbound_transactions')
       .then(response => {
         setTransactions(response.data);
       })
@@ -32,10 +33,11 @@ const Inbound = () => {
 
   const handleViewDetails = (transaction) => {
     setSelectedTransaction(transaction);
-    axios.get(`/api/inbound-transactions/${transaction.id}/details`)
+    axios.get(`/inbound_transaction_details/${transaction.id}`)
       .then(response => {
-        setDetails(response.data);
-        const initialValues = response.data.reduce((acc, detail) => {
+        const data = Array.isArray(response.data) ? response.data : [];
+        setDetails(data);
+        const initialValues = data.reduce((acc, detail) => {
           acc[detail.item_id] = {
             item_id: detail.item_id,
             quantity: detail.quantity || '',
@@ -47,6 +49,7 @@ const Inbound = () => {
       })
       .catch(error => {
         console.error('There was an error fetching the transaction details!', error);
+        setDetails([]); // Ensure details is always an array
       });
   };
 
@@ -98,12 +101,14 @@ const Inbound = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newTransactionWithId = {
-      ...newTransaction,
-      id: transactions.length + 1,
-    };
-    setTransactions([...transactions, newTransactionWithId]);
-    handleFormModalClose();
+    axios.post('/inbound_transactions', newTransaction)
+      .then(response => {
+        setTransactions([...transactions, response.data]);
+        handleFormModalClose();
+      })
+      .catch(error => {
+        console.error('There was an error creating the transaction!', error);
+      });
   };
 
   const handleSaveDetails = () => {
@@ -118,11 +123,15 @@ const Inbound = () => {
       quantity: row.quantity,
       zone: row.zone,
     }));
-    setDetails([...updatedDetails, ...newDetailRows]);
-    setSelectedTransaction(null);
-    setDetails([]);
-    setQuantityMap({});
-    setNewRows([]);
+
+    axios.put(`/inbound_transaction_details/${selectedTransaction.id}`, [...updatedDetails, ...newDetailRows])
+      .then(response => {
+        setDetails([...updatedDetails, ...newDetailRows]);
+        handleCloseModal();
+      })
+      .catch(error => {
+        console.error('There was an error saving the transaction details!', error);
+      });
   };
 
   const handleDeleteRow = (itemId) => {
@@ -138,7 +147,7 @@ const Inbound = () => {
   };
 
   return (
-    <div className=" longfix1">
+    <div className="longfix1">
       <h1 className="text-center mb-4">Inbound Transactions</h1>
       <div className="d-flex justify-content-between mb-3">
         <Button variant="primary" className="longbutton-fix1" onClick={() => setShowFormModal(true)}>Add New Transaction</Button>
@@ -150,9 +159,8 @@ const Inbound = () => {
             <th>Transaction ID</th>
             <th>Date</th>
             <th>Maker ID</th>
-            <th>Maker Name</th>
             <th>Status</th>
-            <th>Destination Warehouse</th>
+            {/* <th>Destination Warehouse</th> */}
             <th>Details</th>
           </tr>
         </thead>
@@ -162,9 +170,8 @@ const Inbound = () => {
               <td>{transaction.id}</td>
               <td>{transaction.date}</td>
               <td>{transaction.maker_id}</td>
-              <td>{transaction.maker_name}</td>
               <td>{transaction.status}</td>
-              <td>{transaction.destination}</td>
+              {/* <td>{transaction.destination}</td> */}
               <td>
                 <Button variant="primary" onClick={() => handleViewDetails(transaction)}>Detail</Button>
               </td>
@@ -187,12 +194,12 @@ const Inbound = () => {
               </tr>
             </thead>
             <tbody>
-              {details.map((detail, index) => (
+              {details.map((detail) => (
                 <tr key={detail.item_id}>
                   <td>
                     <Form.Control 
                       type="text" 
-                      value={quantityMap[detail.item_id].item_id} 
+                      value={quantityMap[detail.item_id]?.item_id || ''} 
                       onChange={(e) => handleQuantityChange(e, detail.item_id, 'item_id')} 
                       required 
                     />
@@ -200,7 +207,7 @@ const Inbound = () => {
                   <td>
                     <Form.Control 
                       type="number" 
-                      value={quantityMap[detail.item_id].quantity} 
+                      value={quantityMap[detail.item_id]?.quantity || ''} 
                       onChange={(e) => handleQuantityChange(e, detail.item_id, 'quantity')} 
                       required 
                     />
@@ -208,7 +215,7 @@ const Inbound = () => {
                   <td>
                     <Form.Control 
                       type="text" 
-                      value={quantityMap[detail.item_id].zone} 
+                      value={quantityMap[detail.item_id]?.zone || ''} 
                       onChange={(e) => handleQuantityChange(e, detail.item_id, 'zone')} 
                       required 
                     />
