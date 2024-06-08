@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Modal, Form, Table, Alert } from 'react-bootstrap';
 import './ProductList.css';
-
+import MyAxios from '../../Utils/MyAxios'
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -16,9 +16,18 @@ const ProductList = () => {
   const [editIndex, setEditIndex] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showError, setShowError] = useState(false);
-  const [nextId, setNextId] = useState(1);
   const [showViewModal, setShowViewModal] = useState(false);
   const [viewProduct, setViewProduct] = useState(null);
+
+  useEffect(() => {
+    MyAxios.get('/products')
+      .then(response => {
+        setProducts(response.data);
+      })
+      .catch(error => {
+        console.error('There was an error fetching the products!', error);
+      });
+  }, []);
 
   const handleCloseAddModal = () => {
     setShowAddModal(false);
@@ -48,9 +57,7 @@ const ProductList = () => {
   };
 
   const generateId = () => {
-    const paddedId = String(nextId).padStart(4, '0');
-    setNextId(nextId + 1);
-    return paddedId;
+    return products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
   };
 
   const handleSubmit = (event) => {
@@ -136,25 +143,20 @@ const ProductList = () => {
                 <td>{product.measure_unit}</td>
                 <td><img src={product.image} alt={product.name} style={{ width: '50px' }} /></td>
                 <td>
-                <div className='row w-60'>
-        <div className="d-flex justify-content-between align-items-center mb-3">
-                <Button variant="info" onClick={() => handleShowViewModal(product)}>View</Button>
-                  <Button variant="warning" className="me-2" onClick={() => handleEditProduct(index)}>Edit</Button>
-                  <Button variant="danger" className="me-2" onClick={() => handleDeleteProduct(index)}>Delete</Button>
-               </div>
-               </div>
-              
-
+                  <div className='row w-60'>
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                      <Button variant="info" onClick={() => handleShowViewModal(product)}>View</Button>
+                      <Button variant="warning" className="me-2" onClick={() => handleEditProduct(index)}>Edit</Button>
+                      <Button variant="danger" className="me-2" onClick={() => handleDeleteProduct(index)}>Delete</Button>
+                    </div>
+                  </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </Table>
       ) : (
-        // <div className="text-center mt-3">
-          // <Alert variant="info">No products found.</Alert>
-        // </div>
-        <p style={{color: 'white'}}>No products found.</p>
+        <p style={{ color: 'white' }}>No products found.</p>
       )}
 
       <Modal show={showAddModal} onHide={handleCloseAddModal}>
@@ -210,16 +212,15 @@ const ProductList = () => {
               />
             </Form.Group>
             <Modal.Footer>
-            <div className="d-flex justify-content-start w-60">
-              <Button variant="secondary mt-2 " onClick={handleCloseAddModal}>
-                Close
-              </Button>
-              <Button variant="btn btn-primary mt-2" type="submit">
-                {editIndex !== null ? 'Save Changes' : 'Add'}
-              </Button>
+              <div className="d-flex justify-content-start w-60">
+                <Button variant="secondary mt-2" onClick={handleCloseAddModal}>
+                  Close
+                </Button>
+                <Button variant="btn btn-primary mt-2" type="submit">
+                  {editIndex !== null ? 'Save Changes' : 'Add'}
+                </Button>
               </div>
             </Modal.Footer>
-
           </Form>
         </Modal.Body>
       </Modal>
@@ -240,11 +241,6 @@ const ProductList = () => {
             </div>
           )}
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseViewModal}>
-            Close
-          </Button>
-        </Modal.Footer>
       </Modal>
     </div>
   );
