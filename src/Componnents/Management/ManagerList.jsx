@@ -9,11 +9,13 @@ const ManagerList = () => {
   const [newManager, setNewManager] = useState({
     name: '',
     email: '',
+    password: '',
     role: 'manager',
     date_of_birth: '',
     phone: '',
     gender: 'male',
     warehouse_id: '',
+    avata: ''
   });
   const [viewManager, setViewManager] = useState(null);
   const [editIndex, setEditIndex] = useState(null);
@@ -34,7 +36,7 @@ const ManagerList = () => {
   const handleCloseViewModal = () => setShowViewModal(false);
 
   const validateManager = (manager) => {
-    if (!manager.name || !manager.email || !manager.date_of_birth || !manager.phone || !manager.warehouse_id) {
+    if (!manager.name || !manager.email || !manager.date_of_birth || !manager.phone || !manager.warehouse_id || !manager.password) {
       return 'Please fill in all fields.';
     }
     if (!/\S+@\S+\.\S+/.test(manager.email)) return 'Email is invalid.';
@@ -58,11 +60,13 @@ const ManagerList = () => {
     setNewManager({
       name: '',
       email: '',
+      password: '',
       role: 'manager',
       date_of_birth: '',
       phone: '',
       gender: 'male',
       warehouse_id: '',
+      avata: ''
     });
     handleCloseAddModal();
   };
@@ -83,6 +87,16 @@ const ManagerList = () => {
   const handleViewManager = (index) => {
     setViewManager(managers[index]);
     setShowViewModal(true);
+  };
+
+  const handleFileChange = (files) => {
+    if (files && files[0]) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setNewManager({ ...newManager, avata: e.target.result });
+      };
+      reader.readAsDataURL(files[0]);
+    }
   };
 
   const filteredManagers = managers.filter((manager) => {
@@ -155,9 +169,6 @@ const ManagerList = () => {
           </tbody>
         </table>
       ) : (
-        // <div className="text-center mt-3">
-        //   <Alert variant="info">No managers found.</Alert>
-        // </div>
         <p style={{ color: 'white' }}>No managers found.</p>
       )}
 
@@ -183,93 +194,129 @@ const ManagerList = () => {
               placeholder="Enter email"
               value={newManager.email}
               onChange={(e) => setNewManager({ ...newManager, email: e.target.value })}
-            />
-          </Form.Group>
-          <Form.Group controlId="formBasicRole">
-            <Form.Label>Role</Form.Label>
-            <Form.Control
+              />
+              </Form.Group>
+              <Form.Group controlId="formBasicPassword">
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+              type="password"
+              placeholder="Enter password"
+              value={newManager.password}
+              onChange={(e) => setNewManager({ ...newManager, password: e.target.value })}
+              />
+              </Form.Group>
+              <Form.Group controlId="formBasicRole">
+              <Form.Label>Role</Form.Label>
+              <Form.Control
               as="select"
               value={newManager.role}
               onChange={(e) => setNewManager({ ...newManager, role: e.target.value })}
-            >
+              >
               <option value="manager">Manager</option>
               <option value="admin">Admin</option>
-            </Form.Control>
-          </Form.Group>
-          <Form.Group controlId="formBasicDateOfBirth">
-            <Form.Label>Date of Birth</Form.Label>
-            <Form.Control
+              </Form.Control>
+              </Form.Group>
+              <Form.Group controlId="formBasicDateOfBirth">
+              <Form.Label>Date of Birth</Form.Label>
+              <Form.Control
               type="date"
               value={newManager.date_of_birth}
               onChange={(e) => setNewManager({ ...newManager, date_of_birth: e.target.value })}
-            />
-          </Form.Group>
-          <Form.Group controlId="formBasicPhone">
-            <Form.Label>Phone</Form.Label>
-            <Form.Control
+              />
+              </Form.Group>
+              <Form.Group controlId="formBasicPhone">
+              <Form.Label>Phone</Form.Label>
+              <Form.Control
               type="text"
               placeholder="Enter phone"
               value={newManager.phone}
               onChange={(e) => setNewManager({ ...newManager, phone: e.target.value })}
-            />
-          </Form.Group>
-          <Form.Group controlId="formBasicGender">
-            <Form.Label>Gender</Form.Label>
-            <Form.Control
+              />
+              </Form.Group>
+              <Form.Group controlId="formBasicGender">
+              <Form.Label>Gender</Form.Label>
+              <Form.Control
               as="select"
               value={newManager.gender}
               onChange={(e) => setNewManager({ ...newManager, gender: e.target.value })}
-            >
+              >
               <option value="male">Male</option>
               <option value="female">Female</option>
-            </Form.Control>
-          </Form.Group>
-          <Form.Group controlId="formBasicWarehouseID">
-            <Form.Label>Warehouse ID</Form.Label>
-            <Form.Control
+              </Form.Control>
+              </Form.Group>
+              <Form.Group controlId="formBasicWarehouseID">
+              <Form.Label>Warehouse ID</Form.Label>
+              <Form.Control
               type="text"
               placeholder="Enter warehouse ID"
               value={newManager.warehouse_id}
               onChange={(e) => setNewManager({ ...newManager, warehouse_id: e.target.value })}
-            />
-          </Form.Group>
-        </Modal.Body>
-        <Modal.Footer>
-          <div className="d-flex justify-content-start w-60">
-            <Button variant="secondary mt-2 " onClick={handleCloseAddModal}>
+              />
+              </Form.Group>
+              <Form.Group controlId="formBasicAvata">
+              <Form.Label>Avata</Form.Label>
+              <Form.Control
+              type="file"
+              accept="image/*"
+              onChange={(e) => handleFileChange(e.target.files)}
+              />
+              </Form.Group>
+              </Modal.Body>
+              <Modal.Footer>
+              <div className="d-flex justify-content-start w-60">
+              <Button variant="secondary mt-2 " onClick={handleCloseAddModal}>
               Close
-            </Button>
-
-            <Button variant="btn btn-primary mt-2" onClick={handleAddManager}>
+              </Button>
+              <Button variant="btn btn-primary mt-2" onClick={handleAddManager}>
               {editIndex !== null ? 'Save Changes' : 'Add'}
-            </Button>
-          </div>
-        </Modal.Footer>
-      </Modal>
+              </Button>
+              </div>
+              </Modal.Footer>
+              </Modal>
 
-      {viewManager && (
-        <Modal show={showViewModal} onHide={handleCloseViewModal}>
-          <Modal.Header closeButton>
-            <Modal.Title>View Manager</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <p><strong>Name:</strong> {viewManager.name}</p>
-            <p><strong>Email:</strong> {viewManager.email}</p>
-            <p><strong>Role:</strong> {viewManager.role}</p>
-            <p><strong>Date of Birth:</strong> {viewManager.date_of_birth}</p>
-            <p><strong>Phone:</strong> {viewManager.phone}</p>
-            <p><strong>Gender:</strong> {viewManager.gender}</p>
-            <p><strong>Warehouse ID:</strong> {viewManager.warehouse_id}</p>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleCloseViewModal}>
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
+              {viewManager && (
+    <Modal show={showViewModal} onHide={handleCloseViewModal}>
+      <Modal.Header closeButton>
+        <Modal.Title>View Manager</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+  <div className="container ">
+    <div className="row">
+      {viewManager.avata && (
+        <div className="col-12 text-center mb-4">
+          <img src={viewManager.avata} alt="Avatar" className="img-fluid" style={{ maxWidth: '200px' }} />
+        </div>
       )}
+
+      <div className="js_container row">
+      <div className="col-12 col-md-6">
+        <p><strong>Name:</strong> {viewManager.name}</p>
+        <p><strong>Role:</strong> {viewManager.role}</p>
+        <p><strong>Gender:</strong> {viewManager.gender}</p>
+        <p><strong>Warehouse ID:</strong> {viewManager.warehouse_id}</p>
+       
+      </div>
+      <div className="col-12 col-md-6">
+      <p><strong>Email:</strong> {viewManager.email}</p>
+      <p><strong>Phone:</strong> {viewManager.phone}</p>
+      <p><strong>Date of Birth:</strong> {viewManager.date_of_birth}</p>
+      </div>
+      </div>
     </div>
-  );
+  </div>
+</Modal.Body>
+
+      <Modal.Footer>
+        <div className=" justify-content-between w-60">
+        <Button variant="secondary" onClick={handleCloseViewModal}>
+          Close
+        </Button>
+        </div>
+      </Modal.Footer>
+    </Modal>
+  )}
+</div>
+);
 };
 
 export default ManagerList;
