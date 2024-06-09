@@ -6,9 +6,9 @@ import './Outbound.css';
 
 const Outbound = () => {
   const [transactions, setTransactions] = useState([]);
-  const [selectedTransaction, setSelectedTransaction] = useState(null);
-  const [details, setDetails] = useState([]);
   const [showFormModal, setShowFormModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [selectedTransactionDetails, setSelectedTransactionDetails] = useState([]);
   const [newTransaction, setNewTransaction] = useState({
     date: '',
     maker_id: '',
@@ -16,8 +16,11 @@ const Outbound = () => {
     status: '',
     destination: '',
   });
-  const [quantityMap, setQuantityMap] = useState({});
-  const [newRows, setNewRows] = useState([]);
+  const [newDetail, setNewDetail] = useState({
+    item_id: '',
+    quantity: '',
+    zone_id: ''
+  });
 
   const navigate = useNavigate();
 
@@ -31,35 +34,6 @@ const Outbound = () => {
       });
   }, []);
 
-  const handleViewDetails = (transaction) => {
-    setSelectedTransaction(transaction);
-    axios.get(`/outbound_transaction_details/${transaction.id}`)
-      .then(response => {
-        const data = Array.isArray(response.data) ? response.data : [];
-        setDetails(data);
-        const initialValues = data.reduce((acc, detail) => {
-          acc[detail.item_id] = {
-            item_id: detail.item_id,
-            quantity: detail.quantity || '',
-            zone: detail.zone || ''
-          };
-          return acc;
-        }, {});
-        setQuantityMap(initialValues);
-      })
-      .catch(error => {
-        console.error('There was an error fetching the transaction details!', error);
-        setDetails([]); // Ensure details is always an array
-      });
-  };
-
-  const handleCloseModal = () => {
-    setSelectedTransaction(null);
-    setDetails([]);
-    setQuantityMap({});
-    setNewRows([]);
-  };
-
   const handleFormModalClose = () => {
     setShowFormModal(false);
     setNewTransaction({
@@ -71,32 +45,19 @@ const Outbound = () => {
     });
   };
 
+  const handleDetailsModalClose = () => {
+    setShowDetailsModal(false);
+    setSelectedTransactionDetails([]);
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewTransaction({ ...newTransaction, [name]: value });
   };
 
-  const handleQuantityChange = (e, itemId, field) => {
-    const { value } = e.target;
-    setQuantityMap({
-      ...quantityMap,
-      [itemId]: {
-        ...quantityMap[itemId],
-        [field]: value
-      }
-    });
-  };
-
-  const handleNewRowChange = (e, index, field) => {
-    const { value } = e.target;
-    const updatedRows = newRows.map((row, i) => 
-      i === index ? { ...row, [field]: value } : row
-    );
-    setNewRows(updatedRows);
-  };
-
-  const addNewRow = () => {
-    setNewRows([...newRows, { item_id: '', quantity: '', zone: '' }]);
+  const handleDetailChange = (e) => {
+    const { name, value } = e.target;
+    setNewDetail({ ...newDetail, [name]: value });
   };
 
   const handleSubmit = (e) => {
@@ -111,39 +72,35 @@ const Outbound = () => {
       });
   };
 
-  const handleSaveDetails = () => {
-    const updatedDetails = details.map(detail => ({
-      ...detail,
-      item_id: quantityMap[detail.item_id].item_id,
-      quantity: quantityMap[detail.item_id].quantity,
-      zone: quantityMap[detail.item_id].zone,
-    }));
-    const newDetailRows = newRows.map(row => ({
-      item_id: row.item_id,
-      quantity: row.quantity,
-      zone: row.zone,
-    }));
-
-    axios.put(`/outbound_transaction_details/${selectedTransaction.id}`, [...updatedDetails, ...newDetailRows])
+  const handleDetailsClick = (id) => {
+    axios.get(`/outbound_transaction_details/${id}`)
       .then(response => {
-        setDetails([...updatedDetails, ...newDetailRows]);
-        handleCloseModal();
+        setSelectedTransactionDetails([response.data]);
+        setShowDetailsModal(true);
+      })
+      .catch(error => {
+        console.error('There was an error fetching the transaction details!', error);
+      });
+  };
+
+  const handleAddDetail = () => {
+    setSelectedTransactionDetails([...selectedTransactionDetails, newDetail]);
+    setNewDetail({
+      item_id: '',
+      quantity: '',
+      zone_id: ''
+    });
+  };
+
+  const handleSaveDetails = () => {
+    // Assuming your API can accept an array of items
+    axios.post('/outbound_transaction_details', selectedTransactionDetails)
+      .then(response => {
+        setShowDetailsModal(false);
       })
       .catch(error => {
         console.error('There was an error saving the transaction details!', error);
       });
-  };
-
-  const handleDeleteRow = (itemId) => {
-    const updatedDetails = details.filter(detail => detail.item_id !== itemId);
-    const { [itemId]: _, ...updatedQuantityMap } = quantityMap;
-    setDetails(updatedDetails);
-    setQuantityMap(updatedQuantityMap);
-  };
-
-  const handleDeleteNewRow = (index) => {
-    const updatedRows = newRows.filter((_, i) => i !== index);
-    setNewRows(updatedRows);
   };
 
   return (
@@ -172,99 +129,11 @@ const Outbound = () => {
               <td>{transaction.maker_id}</td>
               <td>{transaction.status}</td>
               <td>{transaction.destination}</td>
-              <td>
-                <Button variant="primary" onClick={() => handleViewDetails(transaction)}>Detail</Button>
-              </td>
+              <td><Button variant="info" onClick={() => handleDetailsClick(transaction.id)}>Details</Button></td>
             </tr>
           ))}
         </tbody>
       </Table>
-      <Modal show={!!selectedTransaction} onHide={handleCloseModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Transaction Details</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>Item ID</th>
-                <th>Quantity</th>
-                <th>Zone</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {details.map((detail) => (
-                <tr key={detail.item_id}>
-                  <td>
-                    <Form.Control 
-                      type="text" 
-                      value={quantityMap[detail.item_id]?.item_id || ''} 
-                      onChange={(e) => handleQuantityChange(e, detail.item_id, 'item_id')} 
-                      required 
-                    />
-                  </td>
-                  <td>
-                    <Form.Control 
-                      type="number" 
-                      value={quantityMap[detail.item_id]?.quantity || ''} 
-                      onChange={(e) => handleQuantityChange(e, detail.item_id, 'quantity')} 
-                      required 
-                    />
-                  </td>
-                  <td>
-                    <Form.Control 
-                      type="text" 
-                      value={quantityMap[detail.item_id]?.zone || ''} 
-                      onChange={(e) => handleQuantityChange(e, detail.item_id, 'zone')} 
-                      required 
-                    />
-                  </td>
-                  <td>
-                    <Button variant="danger" onClick={() => handleDeleteRow(detail.item_id)}>Delete</Button>
-                  </td>
-                </tr>
-              ))}
-              {newRows.map((row, index) => (
-                <tr key={index}>
-                  <td>
-                    <Form.Control 
-                      type="text" 
-                      value={row.item_id} 
-                      onChange={(e) => handleNewRowChange(e, index, 'item_id')} 
-                      required 
-                    />
-                  </td>
-                  <td>
-                    <Form.Control 
-                      type="number" 
-                      value={row.quantity} 
-                      onChange={(e) => handleNewRowChange(e, index, 'quantity')} 
-                      required 
-                    />
-                  </td>
-                  <td>
-                    <Form.Control 
-                      type="text" 
-                      value={row.zone} 
-                      onChange={(e) => handleNewRowChange(e, index, 'zone')} 
-                      required 
-                    />
-                  </td>
-                  <td>
-                    <Button variant="danger" onClick={() => handleDeleteNewRow(index)}>Delete</Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-          <Button variant="secondary" onClick={addNewRow}>Add New Row</Button>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>Close</Button>
-          <Button variant="primary" onClick={handleSaveDetails}>Save</Button>
-        </Modal.Footer>
-      </Modal>
       <Modal show={showFormModal} onHide={handleFormModalClose}>
         <Modal.Header closeButton>
           <Modal.Title>Add New Transaction</Modal.Title>
@@ -330,6 +199,67 @@ const Outbound = () => {
             <Button variant="secondary" type="submit">Add Transaction</Button>
           </Form>
         </Modal.Body>
+      </Modal>
+      <Modal show={showDetailsModal} onHide={handleDetailsModalClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Transaction Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            {selectedTransactionDetails.map((detail, index) => (
+              <div key={index} className="mb-3">
+                <Row>
+                  <Form.Group as={Col}>
+                    <Form.Label>Item ID</Form.Label>
+                    <Form.Control 
+                      type="text" 
+                      name="item_id" 
+                      value={detail.item_id} 
+                      onChange={(e) => {
+                        const updatedDetails = [...selectedTransactionDetails];
+                        updatedDetails[index].item_id = e.target.value;
+                        setSelectedTransactionDetails(updatedDetails);
+                      }} 
+                      required 
+                    />
+                  </Form.Group>
+                  <Form.Group as={Col}>
+                    <Form.Label>Quantity</Form.Label>
+                    <Form.Control 
+                      type="number" 
+                      name="quantity" 
+                      value={detail.quantity} 
+                      onChange={(e) => {
+                        const updatedDetails = [...selectedTransactionDetails];
+                        updatedDetails[index].quantity = e.target.value;
+                        setSelectedTransactionDetails(updatedDetails);
+                      }} 
+                      required 
+                    />
+                  </Form.Group>
+                  <Form.Group as={Col}>
+                    <Form.Label>Zone ID</Form.Label>
+                    <Form.Control 
+                      type="text" 
+                      name="zone_id" 
+                      value={detail.zone_id} 
+                      onChange={(e) => {
+                        const updatedDetails = [...selectedTransactionDetails];
+                        updatedDetails[index].zone_id = e.target.value;
+                        setSelectedTransactionDetails(updatedDetails);
+                      }} 
+                      required 
+                    />
+                  </Form.Group>
+                </Row>
+              </div>
+            ))}
+          </Form>
+          <Button variant="primary" onClick={handleAddDetail}>Add Item</Button>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleSaveDetails}>Save Details</Button>
+        </Modal.Footer>
       </Modal>
     </div>
   );
