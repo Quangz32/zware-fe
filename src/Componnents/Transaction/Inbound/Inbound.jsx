@@ -108,7 +108,7 @@ const Inbound = () => {
       <h1 className="text-center mb-4">Inbound Transactions</h1>
       <div className="d-flex justify-content-between mb-3">
         <Button variant="primary" className="longbutton-fix1" onClick={() => setShowFormModal(true)}>Add New Transaction</Button>
-        <Button variant="secondary" className="longbutton-fix1 long-move-buttonswitchtransaction" onClick={() => navigate('/inbound')}>Go to Inbound Transactions</Button>
+        <Button variant="secondary" className="longbutton-fix1 long-move-buttonswitchtransaction" onClick={() => navigate('/outbound')}>Go to Outbound Transactions</Button>
       </div>
       <Table striped bordered hover className="mt-3">
         <thead>
@@ -163,7 +163,7 @@ const Inbound = () => {
               </Form.Group>
             </Row>
             <Row className="mb-3">
-              {/* <Form.Group as={Col}>
+              <Form.Group as={Col}>
                 <Form.Label>Maker Name</Form.Label>
                 <Form.Control 
                   type="text" 
@@ -172,7 +172,7 @@ const Inbound = () => {
                   onChange={handleInputChange} 
                   required 
                 />
-              </Form.Group> */}
+              </Form.Group>
               <Form.Group as={Col}>
                 <Form.Label>Status</Form.Label>
                 <Form.Control 

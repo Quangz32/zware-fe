@@ -59,7 +59,7 @@ const LoginForm = () => {
     };
 
     return (
-        <div className="container">
+        <div className=" long-container long-container1">
             <div className="wrapper">
                 <form onSubmit={handleSubmit}>
                     <h1>Login</h1>

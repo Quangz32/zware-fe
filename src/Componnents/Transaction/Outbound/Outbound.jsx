@@ -9,6 +9,8 @@ const Outbound = () => {
   const [showFormModal, setShowFormModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedTransactionDetails, setSelectedTransactionDetails] = useState([]);
+  const [itemDetails, setItemDetails] = useState(null);
+  const [itemStock, setItemStock] = useState(null);
   const [newTransaction, setNewTransaction] = useState({
     date: '',
     maker_id: '',
@@ -58,6 +60,30 @@ const Outbound = () => {
   const handleDetailChange = (e) => {
     const { name, value } = e.target;
     setNewDetail({ ...newDetail, [name]: value });
+    if (name === 'item_id' && value) {
+      fetchItemDetails(value);
+      fetchItemStock(value);
+    }
+  };
+
+  const fetchItemDetails = (itemId) => {
+    axios.get(`/api/items/${itemId}`)
+      .then(response => {
+        setItemDetails(response.data);
+      })
+      .catch(error => {
+        console.error('There was an error fetching the item details!', error);
+      });
+  };
+
+  const fetchItemStock = (itemId) => {
+    axios.get(`/api/items/${itemId}/stock`)
+      .then(response => {
+        setItemStock(response.data);
+      })
+      .catch(error => {
+        console.error('There was an error fetching the item stock!', error);
+      });
   };
 
   const handleSubmit = (e) => {
@@ -84,6 +110,10 @@ const Outbound = () => {
   };
 
   const handleAddDetail = () => {
+    if (parseInt(newDetail.quantity, 10) > itemStock) {
+      alert(`Quantity exceeds available stock (${itemStock}).`);
+      return;
+    }
     setSelectedTransactionDetails([...selectedTransactionDetails, newDetail]);
     setNewDetail({
       item_id: '',
@@ -93,7 +123,6 @@ const Outbound = () => {
   };
 
   const handleSaveDetails = () => {
-    // Assuming your API can accept an array of items
     axios.post('/outbound_transaction_details', selectedTransactionDetails)
       .then(response => {
         setShowDetailsModal(false);
@@ -219,6 +248,8 @@ const Outbound = () => {
                         const updatedDetails = [...selectedTransactionDetails];
                         updatedDetails[index].item_id = e.target.value;
                         setSelectedTransactionDetails(updatedDetails);
+                        fetchItemDetails(e.target.value);
+                        fetchItemStock(e.target.value);
                       }} 
                       required 
                     />
@@ -252,13 +283,60 @@ const Outbound = () => {
                     />
                   </Form.Group>
                 </Row>
+                {itemDetails && (
+                  <div className="item-details">
+                    <p>Item Name: {itemDetails.name}</p>
+                    <p>Description: {itemDetails.description}</p>
+                    <p>Stock Available: {itemStock}</p>
+                  </div>
+                )}
               </div>
             ))}
+            <Row className="mb-3">
+              <Form.Group as={Col}>
+                <Form.Label>Item ID</Form.Label>
+                <Form.Control 
+                  type="text" 
+                  name="item_id" 
+                  value={newDetail.item_id} 
+                  onChange={handleDetailChange} 
+                  required 
+                />
+              </Form.Group>
+              <Form.Group as={Col}>
+                <Form.Label>Quantity</Form.Label>
+                <Form.Control 
+                  type="number" 
+                  name="quantity" 
+                  value={newDetail.quantity} 
+                  onChange={handleDetailChange} 
+                  required 
+                />
+              </Form.Group>
+              <Form.Group as={Col}>
+                <Form.Label>Zone ID</Form.Label>
+                <Form.Control 
+                  type="text" 
+                  name="zone_id" 
+                  value={newDetail.zone_id} 
+                  onChange={handleDetailChange} 
+                  required 
+                />
+              </Form.Group>
+            </Row>
+            {itemDetails && (
+              <div className="item-details">
+                <p>Item Name: {itemDetails.name}</p>
+                <p>Description: {itemDetails.description}</p>
+                <p>Stock Available: {itemStock}</p>
+              </div>
+            )}
+            <Button variant="secondary" onClick={handleAddDetail}>Add Detail</Button>
           </Form>
-          <Button variant="primary" onClick={handleAddDetail}>Add Item</Button>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleSaveDetails}>Save Details</Button>
+          <Button variant="secondary" onClick={handleDetailsModalClose}>Close</Button>
+          <Button variant="primary" onClick={handleSaveDetails}>Save Details</Button>
         </Modal.Footer>
       </Modal>
     </div>

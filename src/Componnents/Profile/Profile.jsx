@@ -77,7 +77,7 @@ const Profile = () => {
     <div className="container centered-container">
       <div className="w-100">
         <div className="">
-        <div className="container rounded bg-white p-4" style={{ marginTop: "65px" }}>
+        <div className="container rounded bg-white p-4" >
             <div className="row">
               <div className="col-md-3 border-right d-flex flex-column align-items-center text-center p-3 py-5">
                 <img
@@ -86,7 +86,7 @@ const Profile = () => {
                   src={profile.avatar}
                   alt="Profile"
                 />
-                <span className="font-weight-bold mt-3">{profile.name || "Name"}</span>
+                <span className="font-weight-bold mt-3" style={{color: 'black'}}>{profile.name || "Name"}</span>
                 <div className="mt-3">
                   <input
                     type="file"
@@ -104,7 +104,7 @@ const Profile = () => {
                     </div>
                     <div className="row mt-2">
                       <div className="col-md-6">
-                        <label className="labels">Name</label>
+                        <label className="labels" >Name</label>
                         <input
                           type="text"
                           className="form-control"

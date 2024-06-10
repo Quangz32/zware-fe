@@ -1,4 +1,4 @@
-* {
+.long-containe{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -8,7 +8,7 @@
     height: 100%;
   }
   
-  .container {
+  .long-container1 {
     display: flex;
     justify-content: center;
     align-items: center;

@@ -1,22 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './Sidebar.css';
 import { Link } from 'react-router-dom';
 
 const Sidebar = () => {
-    const [isExpanded, setIsExpanded] = useState(false);
-
-    const toggleSidebar = () => {
-        setIsExpanded(!isExpanded);
-    };
-
     return (
-        <aside id="sidebar" className={isExpanded ? 'expand' : ''}>
-            <div className="d-flex">
-                <button className="toggle-btn" type="button" onClick={toggleSidebar}>
-                    <i className="bi bi-list"></i>
-                </button>
+        <aside id="sidebar" className="expand">
+            <div className="d-flex logo-container">
                 <div className="sidebar-logo">
                     <Link to="/home">Warehouse Management</Link>
                 </div>
@@ -60,11 +51,11 @@ const Sidebar = () => {
                     </Link>
                 </li>
                 <li className="sidebar-item has-dropdown">
-                    <Link to="#" className="sidebar-link" >
+                    <Link to="#" className="sidebar-link">
                         <i className="bi bi-arrow-left-right"></i>
                         <span>Transaction</span>
                     </Link>
-                    <ul className="sidebar-dropdown ">
+                    <ul className="sidebar-dropdown">
                         <li className="sidebar-item">
                             <Link to="/inbound" className="sidebar-link">
                                 <span>Inbound</span>
