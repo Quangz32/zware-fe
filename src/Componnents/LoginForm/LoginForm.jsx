@@ -41,7 +41,7 @@ const LoginForm = () => {
 
         try {
             const jwt = await authenticateUser(email, password);
-            if (!jwt) {
+            if (jwt.length<50) {
                 setError("Invalid email or password"); // Hiển thị thông báo khi thông tin đăng nhập không đúng
             } else {
                 localStorage.setItem("jwt-token", jwt);
@@ -62,7 +62,7 @@ const LoginForm = () => {
                     {error && <div className="error">{error}</div>}
                     <div className="input-box">
                         <input
-                            type="text"
+                            type="email"
                             placeholder="Email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
