@@ -6,21 +6,18 @@ import MyAxios from "../../Utils/MyAxios";
 
 // Function to call the authentication API
 const authenticateUser = async (username, password) => {
-    const response = await MyAxios.post("auth/login", {
-        email: username,
-        password: password,
-    }).catch((e) => {
-        console.log(e);
-    });
+    try {
+        const response = await MyAxios.post("auth/login", {
+            email: username,
+            password: password,
+        });
+        console.log(response);
 
-    console.log(response);
-
-    // if (response && !response.status == 200) {
-    //     // const message = await response.json();
-    //     // throw new Error(message.error || 'Invalid username or password');
-    // }
-
-    return response ? response.data : null;
+        return response ? response.data : null; // Trả về response.data hoặc null nếu không có dữ liệu trả về
+    } catch (error) {
+        console.log(error);
+        return null; // Trả về null nếu có lỗi xảy ra
+    }
 };
 
 const LoginForm = () => {
@@ -44,9 +41,8 @@ const LoginForm = () => {
 
         try {
             const jwt = await authenticateUser(email, password);
-            if (jwt === "Invalid credentials") {
-                setError("Invalid email or password")
-
+            if (!jwt) {
+                setError("Invalid email or password"); // Hiển thị thông báo khi thông tin đăng nhập không đúng
             } else {
                 localStorage.setItem("jwt-token", jwt);
                 navigate("/home");
@@ -59,7 +55,7 @@ const LoginForm = () => {
     };
 
     return (
-        <div className=" long-container long-container1">
+        <div className="long-container long-container1">
             <div className="wrapper">
                 <form onSubmit={handleSubmit}>
                     <h1>Login</h1>
