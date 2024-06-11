@@ -12,6 +12,7 @@ import Inbound from "./Componnents/Transaction/Inbound/Inbound";
 import WarehouseManager from "./Componnents/WarehouseManagement/WarehouseManagement"; 
 import DisposedGoods from "./Componnents/DisposedGoods/DisposedGoods";
 import Sidebar from "./Componnents/Sidebar/Sidebar";
+import Category from "./Componnents/Category/Category";
 
 
 function AppContent() {
@@ -30,6 +31,7 @@ function AppContent() {
         <Route path="/inbound" element={<Inbound />} />
         <Route path="/products" element={<ProductList />} />
         <Route path="/disposedgoods" element={<DisposedGoods />} />
+        <Route path="/category" element={<Category />} />
         <Route path="/login" element={<Login />} />
         <Route path="/axios" element={<TestAxios />} />
       </Routes>
