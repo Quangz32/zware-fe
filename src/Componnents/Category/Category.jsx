@@ -165,7 +165,7 @@ const CategoryManager = () => {
           </tbody>
         </table>
       ) : (
-        <p>No category found.</p>
+        <p style={{ color: 'white' }}>No category found.</p>
       )}
 
       <Modal show={showAddModal} onHide={handleCloseAddModal}>
