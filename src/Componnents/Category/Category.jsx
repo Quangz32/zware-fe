@@ -109,7 +109,6 @@ const CategoryManager = () => {
     setDeleteIndex(index);
     setShowConfirmModal(true);
   };
-
   const filteredCategories = categories.filter((category) =>
     Object.values(category).some(value =>
       value.toString().toLowerCase().includes(searchTerm.toLowerCase())
@@ -217,12 +216,18 @@ const CategoryManager = () => {
           Are you sure you want to delete this category?
         </Modal.Body>
         <Modal.Footer>
+        <div className='row w-60'>
+        <div className="d-flex justify-content-between align-items-center mb-3">
+
           <Button variant="secondary" onClick={handleCloseConfirmModal}>
             Cancel
           </Button>
           <Button variant="danger" onClick={handleDeleteCategory}>
             Delete
           </Button>
+          </div>
+          </div>
+
         </Modal.Footer>
       </Modal>
     </div>
