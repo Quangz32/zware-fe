@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal, Form, Table, Alert } from 'react-bootstrap';
 import './ProductList.css';
-import MyAxios from '../../Utils/MyAxios'
+import MyAxios from '../../Utils/MyAxios';
+
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -16,8 +17,13 @@ const ProductList = () => {
   const [editIndex, setEditIndex] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   const [showViewModal, setShowViewModal] = useState(false);
   const [viewProduct, setViewProduct] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteIndex, setDeleteIndex] = useState(null);
 
   useEffect(() => {
     MyAxios.get('/products')
@@ -32,6 +38,8 @@ const ProductList = () => {
   const handleCloseAddModal = () => {
     setShowAddModal(false);
     resetNewProduct();
+    setShowError(false);
+    setErrorMessage('');
   };
 
   const handleShowAddModal = () => setShowAddModal(true);
@@ -48,6 +56,7 @@ const ProductList = () => {
 
   const resetNewProduct = () => {
     setNewProduct({
+      id: '',
       name: '',
       category_id: '',
       supplier: '',
@@ -60,11 +69,19 @@ const ProductList = () => {
     return products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
   };
 
+  const validateProduct = (product) => {
+    if (!product.name || !product.category_id || !product.supplier || !product.measure_unit || !product.image) {
+      setErrorMessage('Please fill in all fields.');
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const { name, category_id, supplier, measure_unit, image } = newProduct;
 
-    if (!name || !category_id || !supplier || !measure_unit || !image) {
+    if (!validateProduct(newProduct)) {
       setShowError(true);
       return;
     }
@@ -77,10 +94,14 @@ const ProductList = () => {
       updatedProducts[editIndex] = updatedProduct;
       setProducts(updatedProducts);
       setEditIndex(null);
+      setSuccessMessage('Product updated successfully!');
     } else {
       setProducts([...products, updatedProduct]);
+      setSuccessMessage('Product added successfully!');
     }
 
+    setShowSuccess(true);
+    setShowError(false);
     handleCloseAddModal();
   };
 
@@ -91,8 +112,17 @@ const ProductList = () => {
   };
 
   const handleDeleteProduct = (index) => {
-    const updatedProducts = products.filter((_, i) => i !== index);
+    setDeleteIndex(index);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteProduct = () => {
+    const updatedProducts = products.filter((_, i) => i !== deleteIndex);
     setProducts(updatedProducts);
+    setSuccessMessage('Product deleted successfully!');
+    setShowSuccess(true);
+    setShowDeleteModal(false);
+    setDeleteIndex(null);
   };
 
   const filteredProducts = products.filter((product) =>
@@ -118,6 +148,8 @@ const ProductList = () => {
           />
         </div>
       </div>
+      {showError && <Alert variant="danger" onClose={() => setShowError(false)} dismissible>{errorMessage}</Alert>}
+      {showSuccess && <Alert variant="success" onClose={() => setShowSuccess(false)} dismissible>{successMessage}</Alert>}
       {filteredProducts.length > 0 ? (
         <Table className="table text-center">
           <thead>
@@ -164,7 +196,6 @@ const ProductList = () => {
           <Modal.Title>{editIndex !== null ? 'Edit Product' : 'Add Product'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {showError && <Alert variant="danger">Please fill in all fields.</Alert>}
           <Form onSubmit={handleSubmit}>
             <Form.Group controlId="formProductName">
               <Form.Label>Name</Form.Label>
@@ -241,6 +272,28 @@ const ProductList = () => {
             </div>
           )}
         </Modal.Body>
+      </Modal>
+
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete Product</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Are you sure you want to delete this product?</p>
+        </Modal.Body>
+        <Modal.Footer>
+        <div className='row w-60'>
+        <div className="d-flex justify-content-between align-items-center mb-3">
+
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={confirmDeleteProduct}>
+            Delete
+          </Button>
+          </div>
+          </div>
+        </Modal.Footer>
       </Modal>
     </div>
   );
