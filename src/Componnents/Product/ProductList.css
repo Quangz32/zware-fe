@@ -10,3 +10,7 @@
   margin-left: 260px; /* Adjust according to your sidebar width */
   padding: 20px; /* Optional, for some padding around the content */
 }
+.modal-body {
+  color: aliceblue;
+  
+}
