@@ -156,9 +156,13 @@ const DisposedGoods = () => {
                 <td>{good.date}</td>
                 <td>{good.status}</td>
                 <td>
+                <div className='row w-60'>
+                <div className="d-flex justify-content-between align-items-center mb-3">
                   <Button variant="info" onClick={() => handleViewDisposedGood(index)}>View</Button>{' '}
                   <Button variant="warning" onClick={() => handleEditDisposedGood(index)}>Edit</Button>{' '}
                   <Button variant="danger" onClick={() => handleDeleteDisposedGood(index)}>Delete</Button>
+                </div>
+                </div>
                 </td>
               </tr>
             ))}
@@ -212,12 +216,14 @@ const DisposedGoods = () => {
               />
             </Form.Group>
             <Modal.Footer>
-              <Button variant="secondary" onClick={handleCloseAddModal}>
+            <div className="d-flex justify-content-start w-60">
+              <Button variant="secondary mt-2" onClick={handleCloseAddModal}>
                 Close
               </Button>
-              <Button variant="primary" type="submit">
-                {editIndex !== null ? 'Save Changes' : 'Add Disposed Good'}
+              <Button variant="primary mt-2" type="submit">
+                {editIndex !== null ? 'Save Changes' : 'Add'}
               </Button>
+              </div>
             </Modal.Footer>
           </Form>
         </Modal.Body>
