@@ -4,19 +4,17 @@ import React, { useState, useEffect } from 'react';
 import { Button, Modal, Form, Alert } from 'react-bootstrap';
 // import './WarehouseManager.css';  // Import the CSS file
 import './WarehouseManagement.css';
-import MyAxios from '../../Utils/MyAxios'
-
-
+import MyAxios from '../../Utils/MyAxios';
 
 const WarehouseManager = () => {
   const [warehouses, setWarehouses] = useState([]);
-  //fetch Warehouse list (From BE)
+  
+  // Fetch Warehouse list (From BE)
   const fetchData = async () => {
     try {
-      const response = await MyAxios.get('warehouses');
+      const response = await MyAxios.get('/warehouses');
       console.log(response.data);
       setWarehouses(response.data);
-
     } catch (error) {
       console.error(error);
     }
@@ -26,18 +24,13 @@ const WarehouseManager = () => {
     fetchData();
   }, []);
 
-
-
   const [showAddModal, setShowAddModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
-
   const [newWarehouse, setNewWarehouse] = useState({
-    // id: '',
     name: '',
     address: '',
   });
   const [selectedWarehouse, setSelectedWarehouse] = useState({});
-
   const [editIndex, setEditIndex] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [error, setError] = useState('');
@@ -59,6 +52,9 @@ const WarehouseManager = () => {
     if (!warehouse.name || !warehouse.address) {
       return 'Please fill in all fields.';
     }
+    if (warehouses.some((w) => w.name === warehouse.name && w.id !== warehouse.id)) {
+      return 'Warehouse name already exists.';
+    }
     return '';
   };
 
@@ -69,6 +65,9 @@ const WarehouseManager = () => {
       return;
     }
     if (editIndex !== null) {
+      if (!window.confirm("Are you sure you want to change the information?")) {
+        return;
+      }
       const warehouseToEdit = warehouses[editIndex];
       console.log(newWarehouse);
       await MyAxios.put(`warehouses/${warehouseToEdit.id}`, {
@@ -87,13 +86,11 @@ const WarehouseManager = () => {
   };
 
   const handleDeleteWarehouse = async (index) => {
-    if (!confirm("Are you sure to delete this warehouse?")) {
+    if (!confirm("Are you sure you want to delete this warehouse?")) {
       return;
-    };
-
+    }
     await MyAxios.delete(`warehouses/${warehouses[index].id}`);
     fetchData();
-
   };
 
   const handleEditWarehouse = (index) => {
@@ -165,9 +162,7 @@ const WarehouseManager = () => {
           </tbody>
         </table>
       ) : (
-
-        <p style={{ color: 'white' }}>No warehouse found.</p>
-
+        <p style={{ color: 'white' }}>Not Found WareHouse</p>
       )}
 
       <Modal show={showAddModal} onHide={handleCloseAddModal}>
@@ -197,10 +192,10 @@ const WarehouseManager = () => {
         </Modal.Body>
         <Modal.Footer>
           <div className="d-flex justify-content-start w-60">
-            <Button variant="secondary  mt-2 " onClick={handleCloseAddModal}>
+            <Button variant="secondary mt-2" onClick={handleCloseAddModal}>
               Close
             </Button>
-            <Button variant="btn btn-primary primary  mt-2 " onClick={handleAddWarehouse}>
+            <Button variant="btn btn-primary primary mt-2" onClick={handleAddWarehouse}>
               {editIndex !== null ? 'Save Changes' : 'Add'}
             </Button>
           </div>
@@ -217,9 +212,11 @@ const WarehouseManager = () => {
           <p><strong>Address:</strong> {selectedWarehouse.address}</p>
         </Modal.Body>
         <Modal.Footer>
+        <div className="d-flex justify-content-start w-60">
           <Button variant="secondary" onClick={handleCloseViewModal}>
             Close
           </Button>
+          </div>
         </Modal.Footer>
       </Modal>
     </div>
