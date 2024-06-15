@@ -8,9 +8,8 @@ const DisposedGoods = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [newDisposedGood, setNewDisposedGood] = useState({
-    id: '',
     warehouse_id: '',
-    date: '',
+    date: '', // Ensure this is initialized as a string
     status: ''
   });
   const [viewDisposedGood, setViewDisposedGood] = useState(null);
@@ -39,7 +38,10 @@ const DisposedGoods = () => {
     setErrorMessage('');
   };
 
-  const handleShowAddModal = () => setShowAddModal(true);
+  const handleShowAddModal = () => {
+    setEditIndex(null);
+    setShowAddModal(true);
+  };
 
   const handleCloseViewModal = () => {
     setShowViewModal(false);
@@ -48,42 +50,46 @@ const DisposedGoods = () => {
 
   const resetNewDisposedGood = () => {
     setNewDisposedGood({
-      id: '',
       warehouse_id: '',
-      date: '',
+      date: '', // Ensure to reset to empty string
       status: ''
     });
   };
 
+  const generateID = () => {
+    return 'ID-' + Math.random().toString(36).substr(2, 9);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const { id, warehouse_id, date, status } = newDisposedGood;
+    const { warehouse_id, date, status } = newDisposedGood;
 
-    if (!id || !warehouse_id || !date || !status) {
+    if (!warehouse_id || !status) {
       setShowError(true);
       setErrorMessage('Please fill in all fields.');
       return;
     }
 
-    if (editIndex === null && disposedGoods.some(good => good.id === id)) {
-      setShowError(true);
-      setErrorMessage('ID already exists.');
-      return;
-    }
+    const disposedGoodToSubmit = {
+      ...newDisposedGood,
+      id: editIndex !== null ? disposedGoods[editIndex].id : generateID(),
+    };
 
     try {
       if (editIndex !== null) {
-        const updatedDisposedGood = await axios.put(`/goodsdisposal/${disposedGoods[editIndex].id}`, newDisposedGood);
+        const updatedDisposedGood = await axios.put(`/goodsdisposal/${disposedGoods[editIndex].id}`, disposedGoodToSubmit);
         const updatedDisposedGoods = [...disposedGoods];
         updatedDisposedGoods[editIndex] = updatedDisposedGood.data;
         setDisposedGoods(updatedDisposedGoods);
         setEditIndex(null);
       } else {
-        const response = await axios.post('/goodsdisposal', newDisposedGood);
+        const response = await axios.post('/goodsdisposal', disposedGoodToSubmit);
         setDisposedGoods([...disposedGoods, response.data]);
       }
     } catch (error) {
       console.error('Error submitting disposed good:', error);
+      setShowError(true);
+      setErrorMessage('Error submitting disposed good. Please try again.');
     }
 
     handleCloseAddModal();
@@ -91,9 +97,13 @@ const DisposedGoods = () => {
 
   const handleEditDisposedGood = (index) => {
     const good = disposedGoods[index];
-    setNewDisposedGood(good);
+    setNewDisposedGood({
+      warehouse_id: good.warehouse_id,
+      date: good.date, // Ensure to set date as string
+      status: good.status
+    });
     setEditIndex(index);
-    handleShowAddModal();
+    setShowAddModal(true);
   };
 
   const handleDeleteDisposedGood = async (index) => {
@@ -153,16 +163,16 @@ const DisposedGoods = () => {
                 <td>{index + 1}</td>
                 <td>{good.id}</td>
                 <td>{good.warehouse_id}</td>
-                <td>{good.date}</td>
+                <td>{good.date ? new Date(good.date).toLocaleDateString() : 'No Date'}</td>
                 <td>{good.status}</td>
                 <td>
-                <div className='row w-60'>
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <Button variant="info" onClick={() => handleViewDisposedGood(index)}>View</Button>{' '}
-                  <Button variant="warning" onClick={() => handleEditDisposedGood(index)}>Edit</Button>{' '}
-                  <Button variant="danger" onClick={() => handleDeleteDisposedGood(index)}>Delete</Button>
-                </div>
-                </div>
+                  <div className='row w-60'>
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                      <Button variant="info" onClick={() => handleViewDisposedGood(index)}>View</Button>{' '}
+                      <Button variant="warning" onClick={() => handleEditDisposedGood(index)}>Edit</Button>{' '}
+                      <Button variant="danger" onClick={() => handleDeleteDisposedGood(index)}>Delete</Button>
+                    </div>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -178,16 +188,6 @@ const DisposedGoods = () => {
         <Modal.Body>
           {showError && <Alert variant="danger">{errorMessage}</Alert>}
           <Form onSubmit={handleSubmit}>
-            <Form.Group controlId="formDisposedGoodID">
-              <Form.Label>ID</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter ID"
-                value={newDisposedGood.id}
-                onChange={(e) => setNewDisposedGood({ ...newDisposedGood, id: e.target.value })}
-                disabled={editIndex !== null}
-              />
-            </Form.Group>
             <Form.Group controlId="formDisposedGoodWarehouseID">
               <Form.Label>Warehouse ID</Form.Label>
               <Form.Control
@@ -216,19 +216,18 @@ const DisposedGoods = () => {
               />
             </Form.Group>
             <Modal.Footer>
-            <div className="d-flex justify-content-start w-60">
-              <Button variant="secondary mt-2" onClick={handleCloseAddModal}>
-                Close
-              </Button>
-              <Button variant="primary mt-2" type="submit">
-                {editIndex !== null ? 'Save Changes' : 'Add'}
-              </Button>
+              <div className="d-flex justify-content-start w-60">
+                <Button variant="secondary mt-2" onClick={handleCloseAddModal}>
+                  Close
+                </Button>
+                <Button variant="primary mt-2" type="submit">
+                  Save Changes
+                </Button>
               </div>
             </Modal.Footer>
           </Form>
         </Modal.Body>
       </Modal>
-
       <Modal show={showViewModal} onHide={handleCloseViewModal}>
         <Modal.Header closeButton>
           <Modal.Title>View Disposed Good</Modal.Title>
@@ -238,7 +237,7 @@ const DisposedGoods = () => {
             <div>
               <p><strong>ID:</strong> {viewDisposedGood.id}</p>
               <p><strong>Warehouse ID:</strong> {viewDisposedGood.warehouse_id}</p>
-              <p><strong>Date:</strong> {viewDisposedGood.date}</p>
+              <p><strong>Date:</strong> {viewDisposedGood.date ? new Date(viewDisposedGood.date).toLocaleDateString() : 'No Date'}</p>
               <p><strong>Status:</strong> {viewDisposedGood.status}</p>
             </div>
           )}
