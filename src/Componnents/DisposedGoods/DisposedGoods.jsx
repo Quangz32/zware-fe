@@ -9,7 +9,7 @@ const DisposedGoods = () => {
   const [showViewModal, setShowViewModal] = useState(false);
   const [newDisposedGood, setNewDisposedGood] = useState({
     warehouse_id: '',
-    date: '', // Ensure this is initialized as a string
+    date: '',
     status: ''
   });
   const [viewDisposedGood, setViewDisposedGood] = useState(null);
@@ -19,6 +19,10 @@ const DisposedGoods = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [warehouseInfo, setWarehouseInfo] = useState({
+    warehouseName: '',
+    address: ''
+  });
 
   useEffect(() => {
     const fetchDisposedGoods = async () => {
@@ -53,7 +57,7 @@ const DisposedGoods = () => {
   const resetNewDisposedGood = () => {
     setNewDisposedGood({
       warehouse_id: '',
-      date: '', // Ensure to reset to empty string
+      date: '',
       status: ''
     });
   };
@@ -97,7 +101,7 @@ const DisposedGoods = () => {
     const good = disposedGoods[index];
     setNewDisposedGood({
       warehouse_id: good.warehouse_id,
-      date: good.date, // Ensure to set date as string
+      date: good.date,
       status: good.status
     });
     setEditIndex(index);
@@ -118,10 +122,24 @@ const DisposedGoods = () => {
     }
   };
 
-  const handleViewDisposedGood = (index) => {
+  const handleViewDisposedGood = async (index) => {
     const good = disposedGoods[index];
     setViewDisposedGood(good);
     setShowViewModal(true);
+    // Fetch warehouse info corresponding to warehouse_id
+    await fetchWarehouseInfo(good.warehouse_id);
+  };
+
+  const fetchWarehouseInfo = async (warehouseId) => {
+    try {
+      const response = await axios.get(`/warehouses/${warehouseId}`); // Assuming the endpoint for warehouse info
+      setWarehouseInfo({
+        warehouseName: response.data.name,
+        address: response.data.address
+      });
+    } catch (error) {
+      console.error('Error fetching warehouse info:', error);
+    }
   };
 
   const filteredDisposedGoods = disposedGoods.filter((good) =>
@@ -242,10 +260,12 @@ const DisposedGoods = () => {
         <Modal.Body>
           {viewDisposedGood && (
             <div>
-              <p><strong>ID:</strong> {viewDisposedGood.id}</p>
+                            <p><strong>ID:</strong> {viewDisposedGood.id}</p>
               <p><strong>Warehouse ID:</strong> {viewDisposedGood.warehouse_id}</p>
               <p><strong>Date:</strong> {viewDisposedGood.date}</p>
               <p><strong>Status:</strong> {viewDisposedGood.status}</p>
+              <p><strong>Warehouse Name:</strong> {warehouseInfo.warehouseName}</p>
+              <p><strong>Address:</strong> {warehouseInfo.address}</p>
             </div>
           )}
         </Modal.Body>
@@ -260,3 +280,4 @@ const DisposedGoods = () => {
 };
 
 export default DisposedGoods;
+
