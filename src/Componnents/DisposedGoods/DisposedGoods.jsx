@@ -17,6 +17,8 @@ const DisposedGoods = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     const fetchDisposedGoods = async () => {
@@ -56,36 +58,32 @@ const DisposedGoods = () => {
     });
   };
 
-  const generateID = () => {
-    return 'ID-' + Math.random().toString(36).substr(2, 9);
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     const { warehouse_id, date, status } = newDisposedGood;
 
-    if (!warehouse_id || !status) {
+    if (!warehouse_id || !date || !status) {
       setShowError(true);
       setErrorMessage('Please fill in all fields.');
       return;
     }
 
-    const disposedGoodToSubmit = {
-      ...newDisposedGood,
-      id: editIndex !== null ? disposedGoods[editIndex].id : generateID(),
-    };
-
     try {
       if (editIndex !== null) {
-        const updatedDisposedGood = await axios.put(`/goodsdisposal/${disposedGoods[editIndex].id}`, disposedGoodToSubmit);
+        const updatedDisposedGood = await axios.put(`/goodsdisposal/${disposedGoods[editIndex].id}`, newDisposedGood);
         const updatedDisposedGoods = [...disposedGoods];
         updatedDisposedGoods[editIndex] = updatedDisposedGood.data;
         setDisposedGoods(updatedDisposedGoods);
         setEditIndex(null);
       } else {
-        const response = await axios.post('/goodsdisposal', disposedGoodToSubmit);
+        const response = await axios.post('/goodsdisposal', newDisposedGood);
         setDisposedGoods([...disposedGoods, response.data]);
       }
+      setSuccessMessage('Disposed good saved successfully!');
+      setShowSuccess(true);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000); 
     } catch (error) {
       console.error('Error submitting disposed good:', error);
       setShowError(true);
@@ -107,6 +105,10 @@ const DisposedGoods = () => {
   };
 
   const handleDeleteDisposedGood = async (index) => {
+    if (!window.confirm('Are you sure you want to delete this disposed good?')) {
+      return;
+    }
+
     try {
       await axios.delete(`/goodsdisposal/${disposedGoods[index].id}`);
       const updatedDisposedGoods = disposedGoods.filter((_, i) => i !== index);
@@ -145,6 +147,11 @@ const DisposedGoods = () => {
           />
         </div>
       </div>
+      {showSuccess && (
+        <Alert variant="success" onClose={() => setShowSuccess(false)} dismissible>
+          {successMessage}
+        </Alert>
+      )}
       {disposedGoods.length > 0 ? (
         <Table className="table text-center">
           <thead>
@@ -163,7 +170,7 @@ const DisposedGoods = () => {
                 <td>{index + 1}</td>
                 <td>{good.id}</td>
                 <td>{good.warehouse_id}</td>
-                <td>{good.date ? new Date(good.date).toLocaleDateString() : 'No Date'}</td>
+                <td>{good.date}</td>
                 <td>{good.status}</td>
                 <td>
                   <div className='row w-60'>
@@ -237,7 +244,7 @@ const DisposedGoods = () => {
             <div>
               <p><strong>ID:</strong> {viewDisposedGood.id}</p>
               <p><strong>Warehouse ID:</strong> {viewDisposedGood.warehouse_id}</p>
-              <p><strong>Date:</strong> {viewDisposedGood.date ? new Date(viewDisposedGood.date).toLocaleDateString() : 'No Date'}</p>
+              <p><strong>Date:</strong> {viewDisposedGood.date}</p>
               <p><strong>Status:</strong> {viewDisposedGood.status}</p>
             </div>
           )}
