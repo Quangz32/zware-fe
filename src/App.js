@@ -13,7 +13,7 @@ import WarehouseManager from "./Componnents/WarehouseManagement/WarehouseManagem
 import DisposedGoods from "./Componnents/DisposedGoods/DisposedGoods";
 import Sidebar from "./Componnents/Sidebar/Sidebar";
 import Category from "./Componnents/Category/Category";
-
+import WarehouseItems from "./Componnents/WarehouseItems/WarehouseItems";
 
 function AppContent() {
   const location = useLocation();
@@ -34,6 +34,7 @@ function AppContent() {
         <Route path="/category" element={<Category />} />
         <Route path="/login" element={<Login />} />
         <Route path="/axios" element={<TestAxios />} />
+        <Route path="/WarehouseItems" element={<WarehouseItems/>} />
       </Routes>
     </div>
   );

@@ -56,6 +56,12 @@ const Sidebar = () => {
                         <span>Category</span>
                     </Link>
                 </li>
+                <li className="sidebar-item">
+                    <Link to="/WarehouseItems" className="sidebar-link">
+                        <i className="bi bi-box-seam-fill"></i>
+                        <span>WarehouseItems</span>
+                    </Link>
+                </li>
                 <li className="sidebar-item has-dropdown">
                     <Link to="#" className="sidebar-link">
                         <i className="bi bi-arrow-left-right"></i>
@@ -77,6 +83,7 @@ const Sidebar = () => {
                                 <span>Disposed goods</span>
                             </Link>
                         </li>
+                    
                     </ul>
                 </li>
             </ul>
