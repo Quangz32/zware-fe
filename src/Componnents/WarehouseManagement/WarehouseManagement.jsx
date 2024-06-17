@@ -5,54 +5,62 @@ import MyAxios from '../../Utils/MyAxios';
 
 const WarehouseManager = () => {
   const [warehouses, setWarehouses] = useState([]);
+  const [zones, setZones] = useState([]);
+  const [filteredZones, setFilteredZones] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [newWarehouse, setNewWarehouse] = useState({ name: '', address: '' });
+  const [newZone, setNewZone] = useState({ name: '' });
   const [selectedWarehouse, setSelectedWarehouse] = useState({});
   const [editIndex, setEditIndex] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [error, setError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+  const [viewModalError, setViewModalError] = useState('');
+  const [viewModalSuccess, setViewModalSuccess] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData1 = async () => {
       try {
-        const response = await MyAxios.get('/warehouses');
-        setWarehouses(response.data);
+        const warehouseResponse = await MyAxios.get('/warehouses');
+        setWarehouses(warehouseResponse.data);
       } catch (error) {
         console.error(error);
       }
     };
 
-    fetchData();
+    fetchData1();
   }, []);
-// Function to close success message after 2 seconds
+
   useEffect(() => {
-    const closeSuccessMessage = () => {
-      setTimeout(() => {
-        setSuccessMessage('');
-      }, 2000);
+    const fetchData2 = async () => {
+      try {
+        const zoneResponse = await MyAxios.get('/zones');
+        setZones(zoneResponse.data);
+      } catch (error) {
+        console.error(error);
+      }
     };
-// Call the function if there is a success message
-    if (successMessage) {
-      closeSuccessMessage();
-    }
-  }, [successMessage]);
+    fetchData2();
+  }, []);
 
   const handleCloseAddModal = () => {
     setShowAddModal(false);
     setEditIndex(null);
     setNewWarehouse({ name: '', address: '' });
-    setError('');
+    setViewModalError('');
   };
 
   const handleShowAddModal = () => {
     setShowAddModal(true);
-    setError('');
+    setViewModalError('');
   };
 
-  const handleCloseViewModal = () => setShowViewModal(false);
+  const handleCloseViewModal = () => {
+    setShowViewModal(false);
+    setNewZone({ name: '' });
+    setFilteredZones([]);
+    setViewModalError('');
+  };
 
   const validateWarehouse = (warehouse) => {
     if (!warehouse.name || !warehouse.address) {
@@ -72,19 +80,19 @@ const WarehouseManager = () => {
 
     const validationError = validateWarehouse(newWarehouse);
     if (validationError) {
-      setError(validationError);
+      setViewModalError(validationError);
       return;
     }
 
     setIsSubmitting(true);
     try {
       await MyAxios.post('warehouses', newWarehouse);
-      setSuccessMessage('Warehouse added successfully!');
+      setViewModalSuccess('Warehouse added successfully!');
       fetchData();
       handleCloseAddModal();
     } catch (error) {
       console.error(error);
-      setError('An error occurred while saving the warehouse.');
+      setViewModalError('An error occurred while saving the warehouse.');
     } finally {
       setIsSubmitting(false);
     }
@@ -98,11 +106,11 @@ const WarehouseManager = () => {
     setIsSubmitting(true);
     try {
       await MyAxios.delete(`warehouses/${warehouses[index].id}`);
-      setSuccessMessage('Warehouse deleted successfully!');
+      setViewModalSuccess('Warehouse deleted successfully!');
       fetchData();
     } catch (error) {
       console.error(error);
-      setError('An error occurred while deleting the warehouse.');
+      setViewModalError('An error occurred while deleting the warehouse.');
     } finally {
       setIsSubmitting(false);
     }
@@ -118,7 +126,52 @@ const WarehouseManager = () => {
   const handleViewWarehouse = (index) => {
     const warehouseToView = warehouses[index];
     setSelectedWarehouse(warehouseToView);
+    setFilteredZones(zones.filter(zone => zone.warehouse_id === warehouseToView.id));
     setShowViewModal(true);
+  };
+
+  const handleAddZone = async () => {
+    const newZoneData = { ...newZone, warehouse_id: selectedWarehouse.id };
+    setIsSubmitting(true);
+    try {
+      await MyAxios.post('/zones', newZoneData);
+      setViewModalSuccess('Zone added successfully!');
+      setNewZone({ name: '' });
+      fetchZones();
+    } catch (error) {
+      console.error(error);
+      setViewModalError('An error occurred while adding the zone.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteZone = async (zoneId) => {
+    if (!window.confirm("Are you sure you want to delete this zone?")) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await MyAxios.delete(`zones/${zoneId}`);
+      setViewModalSuccess('Zone deleted successfully!');
+      fetchZones();
+    } catch (error) {
+      console.error(error);
+      setViewModalError('An error occurred while deleting the zone.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const fetchZones = async () => {
+    try {
+      const zoneResponse = await MyAxios.get('/zones');
+      setZones(zoneResponse.data);
+      setFilteredZones(zoneResponse.data.filter(zone => zone.warehouse_id === selectedWarehouse.id));
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const fetchData = async () => {
@@ -154,13 +207,6 @@ const WarehouseManager = () => {
         </div>
       </div>
 
-      {successMessage && (
-        <Alert variant="success" onClose={() => setSuccessMessage('')} dismissible>
-          {successMessage}
-        </Alert>
-      )}
-      {error && <Alert variant="danger">{error}</Alert>}
-
       {filteredWarehouses.length > 0 ? (
         <table className="table text-center">
           <thead>
@@ -193,7 +239,7 @@ const WarehouseManager = () => {
           </tbody>
         </table>
       ) : (
-        <p style={{ color: 'white' }}>Not Found WareHouse</p>
+        <p style={{ color: 'white' }}>Not Found Warehouse</p>
       )}
 
       <Modal show={showAddModal} onHide={handleCloseAddModal}>
@@ -201,7 +247,7 @@ const WarehouseManager = () => {
           <Modal.Title>{editIndex !== null ? 'Edit Warehouse' : 'Add Warehouse'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {error && <Alert variant="danger">{error}</Alert>}
+          {viewModalError && <Alert variant="danger">{viewModalError}</Alert>}
           <Form.Group controlId="formBasicName">
             <Form.Label>Name</Form.Label>
             <Form.Control
@@ -241,13 +287,64 @@ const WarehouseManager = () => {
           <p><strong>ID:</strong> {selectedWarehouse.id}</p>
           <p><strong>Name:</strong> {selectedWarehouse.name}</p>
           <p><strong>Address:</strong> {selectedWarehouse.address}</p>
+
+          <h4>Zones</h4>
+          <Form.Group controlId="formBasicZoneName">
+            <Form.Label>Zone Name</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter zone name"
+              value={newZone.name}
+              onChange={(e) => setNewZone({ ...newZone, name: e.target.value })}
+            />
+            <Button variant="primary mt-2" onClick={handleAddZone} disabled={isSubmitting}>
+              Add Zone
+            </Button>
+          </Form.Group>
+
+          {viewModalSuccess && (
+            <Alert variant="success" onClose={() => setViewModalSuccess('')} dismissible>
+              {viewModalSuccess}
+            </Alert>
+          )}
+
+          {viewModalError && <Alert variant="danger">{viewModalError}</Alert>}
+
+          {filteredZones.length > 0 ? (
+            <table className="table text-center longfixtablewarehouse">
+              <thead>
+                <tr>
+                  <th>No.</th>
+                  <th>ID</th>
+                  <th>Warehouse ID</th>
+                  <th>Name</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredZones.map((zone, index) => (
+                  <tr key={zone.id}>
+                    <td>{index + 1}</td>
+                    <td>{zone.id}</td>
+                    <td>{zone.warehouse_id}</td>
+                    <td>{zone.name}</td>
+                    <td>
+                      <Button variant="danger" onClick={() => handleDeleteZone(zone.id)} disabled={isSubmitting}>
+                        Delete
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>No zones found for this warehouse.</p>
+          )}
         </Modal.Body>
         <Modal.Footer>
-          <div className="d-flex justify-content-start w-60">
-            <Button variant="secondary" onClick={handleCloseViewModal}>
-              Close
-            </Button>
-          </div>
+          <Button variant="secondary" onClick={handleCloseViewModal}>
+            Close
+          </Button>
         </Modal.Footer>
       </Modal>
     </div>
@@ -255,3 +352,4 @@ const WarehouseManager = () => {
 };
 
 export default WarehouseManager;
+
