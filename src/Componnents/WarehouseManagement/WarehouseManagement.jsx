@@ -17,7 +17,9 @@ const WarehouseManager = () => {
   const [viewModalError, setViewModalError] = useState('');
   const [viewModalSuccess, setViewModalSuccess] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
+  const [successMessage, setSuccessMessage] = useState('');
   useEffect(() => {
     const fetchData1 = async () => {
       try {
@@ -30,6 +32,15 @@ const WarehouseManager = () => {
 
     fetchData1();
   }, []);
+// Clear success message after 2 seconds
+useEffect(() => {
+  if (successMessage) {
+      const timer = setTimeout(() => {
+          setSuccessMessage('');
+      }, 2000);
+      return () => clearTimeout(timer);
+  }
+}, [successMessage]);
 
   useEffect(() => {
     const fetchData2 = async () => {
@@ -84,18 +95,35 @@ const WarehouseManager = () => {
       return;
     }
 
+    // setIsSubmitting(true);
+    // try {
+    //   await MyAxios.post('warehouses', newWarehouse);
+    //   setViewModalSuccess('Warehouse added successfully!');
+    //   fetchData();
+    //   handleCloseAddModal();
+    // } catch (error) {
+    //   console.error(error);
+    //   setViewModalError('An error occurred while saving the warehouse.');
+    // } finally {
+    //   setIsSubmitting(false);
+    // }
     setIsSubmitting(true);
-    try {
-      await MyAxios.post('warehouses', newWarehouse);
-      setViewModalSuccess('Warehouse added successfully!');
-      fetchData();
-      handleCloseAddModal();
-    } catch (error) {
-      console.error(error);
-      setViewModalError('An error occurred while saving the warehouse.');
-    } finally {
-      setIsSubmitting(false);
-    }
+        try {
+            if (editIndex !== null) {
+                await MyAxios.put(`/warehouses/${newWarehouse.id}`, newWarehouse);
+                setSuccessMessage('Warehouse updated successfully!');
+            } else {
+                await MyAxios.post('/warehouses', newWarehouse);
+                setSuccessMessage('Warehouse added successfully!');
+            }
+            fetchData();
+            handleCloseAddModal();
+        } catch (error) {
+            console.error('Error saving warehouse:', error);
+            setError('An error occurred while saving the warehouse.');
+        } finally {
+            setIsSubmitting(false);
+        }
   };
 
   const handleDeleteWarehouse = async (index) => {
@@ -109,13 +137,13 @@ const WarehouseManager = () => {
       setViewModalSuccess('Warehouse deleted successfully!');
       fetchData();
     } catch (error) {
-      console.error(error);
+      console.error('Error deleting warehouse:', error);
       setViewModalError('An error occurred while deleting the warehouse.');
     } finally {
       setIsSubmitting(false);
     }
   };
-
+// Handle editing warehouse
   const handleEditWarehouse = (index) => {
     const warehouseToEdit = warehouses[index];
     setNewWarehouse({ ...warehouseToEdit });
@@ -182,7 +210,7 @@ const WarehouseManager = () => {
       console.error(error);
     }
   };
-
+// Filter warehouse based on search term
   const filteredWarehouses = warehouses.filter((warehouse) =>
     Object.values(warehouse).some(value =>
       value.toString().toLowerCase().includes(searchTerm.toLowerCase())
@@ -206,6 +234,12 @@ const WarehouseManager = () => {
           />
         </div>
       </div>
+      {successMessage && (
+                <Alert variant="success" onClose={() => setSuccessMessage('')} dismissible>
+                    {successMessage}
+                </Alert>
+            )}
+            {error && <Alert variant="danger">{error}</Alert>}
 
       {filteredWarehouses.length > 0 ? (
         <table className="table text-center">
@@ -272,7 +306,7 @@ const WarehouseManager = () => {
             <Button variant="secondary mt-2" onClick={handleCloseAddModal}>
               Close
             </Button>
-            <Button variant="primary mt-2" onClick={handleAddWarehouse}>
+            <Button variant="primary mt-2" onClick={handleAddWarehouse} disabled={isSubmitting}>
               {editIndex !== null ? 'Save' : 'Add'}
             </Button>
           </div>
